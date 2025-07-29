@@ -1,0 +1,99 @@
+{% extends 'catalog/base_catalog.html' %}
+{% load static %}
+
+{% block title %}Nouveautés - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1>Nos Nouveautés</h1>
+            <p class="lead">Découvrez nos derniers produits ajoutés au catalogue.</p>
+            <hr>
+        </div>
+    </div>
+    
+    {% if produits %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for produit in produits %}
+                <div class="col">
+                    <div class="card h-100">
+                        {% if produit.images.first %}
+                            <img src="{{ produit.images.first.image.url }}" class="card-img-top" alt="{{ produit.nom }}">
+                        {% else %}
+                            <div class="text-center py-5 bg-light">
+                                <i class="fas fa-image fa-4x text-muted"></i>
+                                <p class="mt-2">Aucune image disponible</p>
+                            </div>
+                        {% endif %}
+                        
+                        {% if produit.est_nouveau %}
+                            <span class="position-absolute top-0 start-0 badge bg-success m-2">Nouveau</span>
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">{{ produit.nom }}</h5>
+                            <p class="card-text text-muted">{{ produit.courte_description|truncatewords:15 }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="h5 mb-0">{{ produit.prix }} €</span>
+                                <a href="{% url 'catalog:detail_produit' slug=produit.slug %}" class="btn btn-outline-primary">
+                                    Voir le produit
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+            <nav class="mt-5" aria-label="Pagination des nouveautés">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Précédent">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo;</span>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Suivant">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&raquo;</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+        
+    {% else %}
+        <div class="alert alert-info">
+            Aucun nouveau produit n'est disponible pour le moment. Revenez bientôt pour découvrir nos dernières nouveautés !
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

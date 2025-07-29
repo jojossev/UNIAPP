@@ -1,0 +1,117 @@
+{% extends 'catalog/base_catalog.html' %}
+{% load static %}
+
+{% block title %}Accueil - Ma Boutique{% endblock %}
+
+{% block content %}
+<!-- Bannière principale -->
+<div class="banner mb-5">
+    <div class="p-5 text-center bg-image rounded-3" style="
+        background-image: url('https://via.placeholder.com/1920x400');
+        background-size: cover;
+        background-position: center;
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    ">
+        <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <div class="text-white p-4">
+                    <h1 class="mb-3">Bienvenue sur Ma Boutique</h1>
+                    <h4 class="mb-3">Découvrez nos dernières collections</h4>
+                    <a class="btn btn-outline-light btn-lg" href="#produits" role="button">Voir les produits</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Produits phares -->
+<section id="produits" class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h4">Nos produits phares</h2>
+        <a href="{% url 'catalog:liste_produits' %}" class="btn btn-outline-primary btn-sm">Voir tout</a>
+    </div>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for produit in produits_phares %}
+        <div class="col">
+            <div class="card h-100">
+                {% if produit.image %}
+                <img src="{{ produit.image.url }}" class="card-img-top" alt="{{ produit.nom }}">
+                {% else %}
+                <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Image non disponible">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ produit.nom }}</h5>
+                    <p class="card-text text-muted">{{ produit.categorie.nom }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="h5 mb-0">{{ produit.prix }} €</span>
+                        {% if produit.est_en_promotion %}
+                        <span class="badge bg-danger">Promo !</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'catalog:detail_produit' produit.slug %}" class="btn btn-primary w-100">Voir le détail</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">Aucun produit phare pour le moment.</div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Nouveautés -->
+<section class="mb-5">
+    <h2 class="h4 mb-4">Nos nouveautés</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for produit in nouveautes %}
+        <div class="col">
+            <div class="card h-100">
+                {% if produit.image %}
+                <img src="{{ produit.image.url }}" class="card-img-top" alt="{{ produit.nom }}">
+                {% else %}
+                <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Image non disponible">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ produit.nom }}</h5>
+                    <p class="card-text text-muted">{{ produit.categorie.nom }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="h5 mb-0">{{ produit.prix }} €</span>
+                        {% if produit.est_en_promotion %}
+                        <span class="badge bg-danger">Promo !</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'catalog:detail_produit' produit.slug %}" class="btn btn-outline-primary w-100">Voir le détail</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">Aucune nouveauté pour le moment.</div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Appel à l'action -->
+<section class="bg-light p-5 text-center mb-5">
+    <h2 class="h3 mb-4">Inscrivez-vous à notre newsletter</h2>
+    <p class="lead mb-4">Recevez nos offres exclusives et restez informé de nos dernières nouveautés.</p>
+    <form class="row g-3 justify-content-center">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="email" class="form-control form-control-lg" placeholder="Votre adresse email">
+                <button class="btn btn-primary btn-lg" type="submit">S'inscrire</button>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}

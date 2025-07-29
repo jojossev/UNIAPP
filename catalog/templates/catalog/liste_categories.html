@@ -1,0 +1,42 @@
+{% extends 'catalog/base_catalog.html' %}
+{% load static %}
+
+{% block title %}Catégories - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Nos catégories de produits</h1>
+    
+    {% if categories %}
+        <div class="row">
+            {% for categorie in categories %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if categorie.image %}
+                            <img src="{{ categorie.image.url }}" class="card-img-top" alt="{{ categorie.nom }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="text-center py-5 bg-light">
+                                <i class="fas fa-image fa-4x text-muted"></i>
+                                <p class="mt-2">Aucune image</p>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ categorie.nom }}</h5>
+                            {% if categorie.description %}
+                                <p class="card-text">{{ categorie.description|truncatewords:20 }}</p>
+                            {% endif %}
+                            <a href="{% url 'catalog:produits_par_categorie' categorie_slug=categorie.slug %}" class="btn btn-primary">
+                                Voir les produits <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Aucune catégorie n'est disponible pour le moment.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

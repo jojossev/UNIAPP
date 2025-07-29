@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Profil - E-commerce{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <div class="profile-avatar" style="width: 150px; height: 150px; margin: 0 auto; border-radius: 50%; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 60px; color: #6c757d;">
+                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                    </div>
+                </div>
+                <h4>{{ user.get_full_name|default:user.username }}</h4>
+                <p class="text-muted mb-1">
+                    {% if user.role == 'admin' %}
+                        <span class="badge bg-danger">Administrateur</span>
+                    {% else %}
+                        <span class="badge bg-primary">Client</span>
+                    {% endif %}
+                </p>
+                <p class="text-muted">Membre depuis {{ user.date_joined|date:"F Y" }}</p>
+                
+                <div class="d-flex justify-content-center gap-2 mb-3">
+                    <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-primary btn-sm">
+                        Changer le mot de passe
+                    </a>
+                    <a href="{% url 'accounts:logout' %}" class="btn btn-outline-danger btn-sm">
+                        Déconnexion
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Statistiques</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span>Commandes</span>
+                    <span class="text-muted">0</span>
+                </div>
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span>Dans la wishlist</span>
+                    <span class="text-muted">0</span>
+                </div>
+                <div class="d-flex justify-content-between py-2">
+                    <span>Inscrit depuis</span>
+                    <span class="text-muted">{{ user.date_joined|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Informations personnelles</h5>
+                <a href="#" class="btn btn-sm btn-outline-primary">Modifier</a>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-3 fw-bold">Nom complet</div>
+                    <div class="col-sm-9">
+                        {{ user.get_full_name|default:"Non renseigné" }}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-3 fw-bold">Email</div>
+                    <div class="col-sm-9">
+                        {{ user.email|default:"Non renseigné" }}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-3 fw-bold">Téléphone</div>
+                    <div class="col-sm-9">
+                        {{ user.phone|default:"Non renseigné" }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row mb-3">
+                    <div class="col-sm-3 fw-bold">Adresse</div>
+                    <div class="col-sm-9">
+                        {% if user.address %}
+                            {{ user.address }}<br>
+                            {% if user.postal_code %}{{ user.postal_code }}{% endif %}
+                            {% if user.city %}{{ user.city }}{% endif %}<br>
+                            {% if user.country %}{{ user.country }}{% endif %}
+                        {% else %}
+                            Non renseignée
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Dernières commandes</h5>
+            </div>
+            <div class="card-body text-center py-5">
+                <div class="text-muted mb-3">
+                    <i class="bi bi-cart-x" style="font-size: 3rem;"></i>
+                    <p class="mt-2">Aucune commande pour le moment</p>
+                </div>
+                <a href="#" class="btn btn-primary">Voir nos produits</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

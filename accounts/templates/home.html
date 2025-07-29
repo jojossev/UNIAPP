@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Accueil - E-commerce{% endblock %}
+
+{% block content %}
+<div class="jumbotron text-center">
+    <h1 class="display-4">Bienvenue sur notre plateforme E-commerce</h1>
+    <p class="lead">Découvrez nos produits et profitez de nos offres exceptionnelles.</p>
+    <hr class="my-4">
+    
+    {% if user.is_authenticated %}
+        <p>Bonjour, {{ user.get_full_name|default:user.username }} !</p>
+        <p>Que souhaitez-vous faire aujourd'hui ?</p>
+        <a class="btn btn-primary btn-lg" href="{% url 'accounts:profile' %}" role="button">Voir mon profil</a>
+    {% else %}
+        <p>Rejoignez-nous dès maintenant pour profiter de tous nos services.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a class="btn btn-primary btn-lg" href="{% url 'accounts:login' %}" role="button">Se connecter</a>
+            <a class="btn btn-outline-primary btn-lg" href="{% url 'accounts:register' %}" role="button">S'inscrire</a>
+        </div>
+    {% endif %}
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Facile à utiliser</h5>
+                    <p class="card-text">Une interface intuitive pour une expérience d'achat simplifiée.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Livraison rapide</h5>
+                    <p class="card-text">Recevez vos commandes en un temps record.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Support client</h5>
+                    <p class="card-text">Une équipe à votre écoute pour répondre à toutes vos questions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Inscription - E-commerce{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Créer un compte</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <h5 class="mb-3">Informations de connexion</h5>
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Nom d'utilisateur</label>
+                        {{ form.username }}
+                        <div class="invalid-feedback">
+                            Veuillez entrer un nom d'utilisateur valide.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Adresse email</label>
+                        {{ form.email }}
+                        <div class="invalid-feedback">
+                            Veuillez entrer une adresse email valide.
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_password1" class="form-label">Mot de passe</label>
+                            {{ form.password1 }}
+                            <div class="form-text">
+                                Votre mot de passe doit contenir au moins 8 caractères et ne pas être trop courant.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_password2" class="form-label">Confirmer le mot de passe</label>
+                            {{ form.password2 }}
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    <h5 class="mb-3">Informations personnelles</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_first_name" class="form-label">Prénom</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_last_name" class="form-label">Nom</label>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_phone" class="form-label">Téléphone</label>
+                        {{ form.phone }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_address" class="form-label">Adresse</label>
+                        {{ form.address }}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_postal_code" class="form-label">Code postal</label>
+                            {{ form.postal_code }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_city" class="form-label">Ville</label>
+                            {{ form.city }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_country" class="form-label">Pays</label>
+                        {{ form.country }}
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">S'inscrire</button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p>Déjà inscrit ? <a href="{% url 'accounts:login' %}">Connectez-vous ici</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Exemple de validation côté client avec JavaScript natif
+(function () {
+    'use strict'
+    
+    // Récupérer tous les formulaires auxquels nous voulons appliquer le style de validation Bootstrap
+    var forms = document.querySelectorAll('.needs-validation')
+    
+    // Boucle sur les champs et empêcher la soumission
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script>
+{% endblock %}

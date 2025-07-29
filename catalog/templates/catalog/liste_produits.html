@@ -1,0 +1,179 @@
+{% extends 'catalog/base_catalog.html' %}
+{% load static %}
+
+{% block title %}{% if categorie_actuelle %}{{ categorie_actuelle.nom }}{% else %}Tous les produits{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Filtres -->
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Filtres</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" id="filter-form">
+                    <!-- Tri -->
+                    <div class="mb-4">
+                        <h6 class="border-bottom pb-2">Trier par</h6>
+                        <select name="tri" class="form-select" onchange="this.form.submit()">
+                            <option value="date-desc" {% if tri_actuel == 'date-desc' %}selected{% endif %}>Nouveautés</option>
+                            <option value="prix-asc" {% if tri_actuel == 'prix-asc' %}selected{% endif %}>Prix croissant</option>
+                            <option value="prix-desc" {% if tri_actuel == 'prix-desc' %}selected{% endif %}>Prix décroissant</option>
+                            <option value="nom-asc" {% if tri_actuel == 'nom-asc' %}selected{% endif %}>Nom (A-Z)</option>
+                            <option value="nom-desc" {% if tri_actuel == 'nom-desc' %}selected{% endif %}>Nom (Z-A)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Catégories -->
+                    <div class="mb-4">
+                        <h6 class="border-bottom pb-2">Catégories</h6>
+                        <div class="list-group list-group-flush">
+                            <a href="{% url 'catalog:liste_produits' %}" 
+                               class="list-group-item list-group-item-action {% if not categorie_actuelle %}active{% endif %}">
+                                Toutes les catégories
+                            </a>
+                            {% for categorie in categories %}
+                            <a href="{% url 'catalog:produits_par_categorie' categorie.slug %}" 
+                               class="list-group-item list-group-item-action {% if categorie_actuelle and categorie_actuelle.id == categorie.id %}active{% endif %}">
+                                {{ categorie.nom }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Prix -->
+                    <div class="mb-3">
+                        <h6 class="border-bottom pb-2">Prix</h6>
+                        <div class="row g-2">
+                            <div class="col">
+                                <input type="number" class="form-control" placeholder="Min" name="prix_min">
+                            </div>
+                            <div class="col">
+                                <input type="number" class="form-control" placeholder="Max" name="prix_max">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm w-100 mt-2">Appliquer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Liste des produits -->
+    <div class="col-md-9">
+        {% if categorie_actuelle %}
+            <h1 class="h3 mb-4">{{ categorie_actuelle.nom }}</h1>
+            {% if categorie_actuelle.description %}
+                <p class="text-muted mb-4">{{ categorie_actuelle.description }}</p>
+            {% endif %}
+        {% else %}
+            <h1 class="h3 mb-4">Tous nos produits</h1>
+        {% endif %}
+        
+        <!-- Barre de recherche -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" action="{% url 'catalog:recherche' %}" class="row g-2">
+                    <div class="col-md-10">
+                        <input type="text" name="q" class="form-control" placeholder="Rechercher un produit..." value="{{ query }}">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Produits -->
+        {% if produits %}
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+                {% for produit in produits %}
+                <div class="col">
+                    <div class="card h-100">
+                        {% if produit.images.exists %}
+                        <img src="{{ produit.images.first.image.url }}" class="card-img-top" alt="{{ produit.nom }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Image non disponible">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ produit.nom }}</h5>
+                            <p class="card-text text-muted small">{{ produit.categorie.nom }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if produit.est_en_promotion %}
+                                        <span class="text-danger fw-bold">{{ produit.prix_promotionnel }} €</span>
+                                        <small class="text-decoration-line-through text-muted ms-2">{{ produit.prix }} €</small>
+                                    {% else %}
+                                        <span class="fw-bold">{{ produit.prix }} €</span>
+                                    {% endif %}
+                                </div>
+                                {% if produit.est_nouveau %}
+                                    <span class="badge bg-success">Nouveau</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{% url 'catalog:detail_produit' produit.slug %}" class="btn btn-outline-primary w-100">Voir le détail</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <nav aria-label="Pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">&laquo; Première</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Précédent</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Suivant</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Dernière &raquo;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+            
+        {% else %}
+            <div class="alert alert-info">
+                Aucun produit trouvé. Essayez d'autres critères de recherche.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Soumission automatique du formulaire de filtre lors du changement de sélection
+$(document).ready(function() {
+    $('select[name="tri"]').change(function() {
+        $('#filter-form').submit();
+    });
+});
+</script>
+{% endblock %}

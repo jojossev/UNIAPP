@@ -1,0 +1,164 @@
+{% extends 'catalog/base_catalog.html' %}
+{% load static %}
+
+{% block title %}Contact - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body p-5">
+                    <h1 class="h2 mb-4">Contactez-nous</h1>
+                    <p class="lead mb-4">
+                        Notre équipe est à votre écoute pour toute question ou demande d'information.
+                        Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.
+                    </p>
+                    
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-4 text-center">
+                            <div class="bg-light p-4 rounded-3 h-100">
+                                <div class="text-primary mb-3">
+                                    <i class="fas fa-map-marker-alt fa-2x"></i>
+                                </div>
+                                <h5 class="h6 mb-2">Adresse</h5>
+                                <p class="mb-0 small">
+                                    123 Rue du Commerce<br>
+                                    75000 Paris, France
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 text-center">
+                            <div class="bg-light p-4 rounded-3 h-100">
+                                <div class="text-primary mb-3">
+                                    <i class="fas fa-phone-alt fa-2x"></i>
+                                </div>
+                                <h5 class="h6 mb-2">Téléphone</h5>
+                                <p class="mb-0 small">
+                                    +33 1 23 45 67 89<br>
+                                    Lun-Ven: 9h-18h
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 text-center">
+                            <div class="bg-light p-4 rounded-3 h-100">
+                                <div class="text-primary mb-3">
+                                    <i class="fas fa-envelope fa-2x"></i>
+                                </div>
+                                <h5 class="h6 mb-2">Email</h5>
+                                <p class="mb-0 small">
+                                    contact@monsite.com<br>
+                                    Réponse sous 24h
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="nom" class="form-label">Nom complet *</label>
+                                <input type="text" class="form-control" id="nom" name="nom" required>
+                                <div class="invalid-feedback">
+                                    Veuillez entrer votre nom complet.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Adresse email *</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                                <div class="invalid-feedback">
+                                    Veuillez entrer une adresse email valide.
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label for="sujet" class="form-label">Sujet *</label>
+                                <input type="text" class="form-control" id="sujet" name="sujet" required>
+                                <div class="invalid-feedback">
+                                    Veuillez entrer un sujet.
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label for="message" class="form-label">Votre message *</label>
+                                <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                                <div class="invalid-feedback">
+                                    Veuillez entrer votre message.
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="rgpd" required>
+                                    <label class="form-check-label small" for="rgpd">
+                                        J'accepte que mes données personnelles soient utilisées pour me recontacter dans le cadre de ma demande. *
+                                    </label>
+                                    <div class="invalid-feedback">
+                                        Vous devez accepter les conditions pour continuer.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="reset" class="btn btn-outline-secondary me-md-2">
+                                <i class="fas fa-undo me-1"></i> Réinitialiser
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-1"></i> Envoyer le message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div class="ratio ratio-21x9">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.9916256937595!2d2.292292615509614!3d48.85837007928747!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e2964e34e2d%3A0x8ddca9ee380ef7e0!2sTour%20Eiffel!5e0!3m2!1sfr!2sfr!4v1623932345678!5m2!1sfr!2sfr" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+// Validation des champs du formulaire
+(function () {
+    'use strict'
+    
+    // Récupérer tous les formulaires auxquels nous voulons appliquer la validation
+    var forms = document.querySelectorAll('.needs-validation')
+    
+    // Boucler sur les formulaires et empêcher la soumission si invalide
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                
+                form.classList.add('was-validated')
+            }, false)
+        })
+})()
+</script>
+{% endblock %}
+{% endblock %}
