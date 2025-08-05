@@ -39,7 +39,7 @@ def setup_django():
                 'catalog',
                 'orders',
             ],
-            AUTH_USER_MODEL='accounts.CustomUser',
+            AUTH_USER_MODEL='accounts.User',
             ROOT_URLCONF='ecommerce.urls',
             TEMPLATES=[
                 {

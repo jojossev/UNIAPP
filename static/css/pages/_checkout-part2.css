@@ -1,0 +1,418 @@
+/* ==========================================================================
+   PAGE : PAIEMENT - Partie 2
+   Styles pour les méthodes de paiement et détails de la carte de crédit
+   ========================================================================== */
+
+/* Méthodes de paiement */
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.payment-method {
+  position: relative;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #fff;
+}
+
+[data-bs-theme="dark"] .payment-method {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+.payment-method:hover {
+  border-color: var(--color-primary);
+}
+
+.payment-method.active {
+  border-color: var(--color-primary);
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+[data-bs-theme="dark"] .payment-method.active {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.payment-method-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.payment-method-radio {
+  margin-right: 1rem;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.payment-method.active .payment-method-radio {
+  border-color: var(--color-primary);
+}
+
+.payment-method-radio::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.payment-method.active .payment-method-radio::after {
+  opacity: 1;
+}
+
+.payment-method-title {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-right: auto;
+}
+
+.payment-method-icon {
+  margin-left: 1rem;
+  height: 24px;
+  width: auto;
+}
+
+.payment-method-description {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-bottom: 0;
+  padding-left: 2rem;
+}
+
+/* Détails de la carte de crédit */
+.credit-card-form {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  background-color: #f8f9fa;
+}
+
+[data-bs-theme="dark"] .credit-card-form {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+.credit-card-preview {
+  margin-bottom: 1.5rem;
+  position: relative;
+  height: 200px;
+  perspective: 1000px;
+}
+
+.credit-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  transform: rotateY(0deg);
+}
+
+.credit-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #2c3e50, #4ca1af);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, #4ca1af, #2c3e50);
+}
+
+.card-logo {
+  text-align: right;
+  margin-bottom: 1.5rem;
+}
+
+.card-logo img {
+  height: 30px;
+  width: auto;
+}
+
+.card-number {
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-holder,
+.card-expiry {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.card-expiry {
+  text-align: right;
+}
+
+.card-cvv {
+  background: #fff;
+  height: 40px;
+  margin-top: 1.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 1rem;
+  color: #2c3e50;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Styles pour les champs de formulaire de la carte */
+.card-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.card-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.card-form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.card-flip-btn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  transition: color 0.2s ease;
+}
+
+.card-flip-btn:hover {
+  color: #0b5ed7;
+  text-decoration: underline;
+}
+
+/* Styles pour les cartes de paiement sauvegardées */
+.saved-cards {
+  margin-top: 1.5rem;
+}
+
+.saved-card {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: 1rem;
+  background-color: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+[data-bs-theme="dark"] .saved-card {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+.saved-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.saved-card-radio {
+  margin-right: 1rem;
+}
+
+.saved-card-details {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.saved-card-icon {
+  margin-right: 1rem;
+  width: 40px;
+  height: 25px;
+  object-fit: contain;
+}
+
+.saved-card-info {
+  flex: 1;
+}
+
+.saved-card-number {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  color: var(--color-text);
+}
+
+.saved-card-expiry {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+
+.saved-card-remove {
+  color: var(--color-danger);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-left: 1rem;
+  transition: color 0.2s ease;
+}
+
+.saved-card-remove:hover {
+  color: #b02a37;
+}
+
+/* Bouton pour ajouter une nouvelle carte */
+.add-card-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-text);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+[data-bs-theme="dark"] .add-card-btn {
+  background-color: #2d3748;
+  border-color: #4a5568;
+  color: #e2e8f0;
+}
+
+.add-card-btn:hover {
+  border-color: var(--color-primary);
+  background-color: rgba(13, 110, 253, 0.05);
+  color: var(--color-primary);
+}
+
+[data-bs-theme="dark"] .add-card-btn:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.add-card-btn i {
+  margin-right: 0.5rem;
+  font-size: 1.25rem;
+}
+
+/* Styles pour les méthodes de paiement alternatives */
+.payment-method-paypal .payment-method-icon,
+.payment-method-apple-pay .payment-method-icon,
+.payment-method-google-pay .payment-method-icon {
+  height: 30px;
+}
+
+/* Styles pour les méthodes de paiement par virement bancaire */
+.bank-transfer-details {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+[data-bs-theme="dark"] .bank-transfer-details {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+.bank-info {
+  margin-bottom: 1.5rem;
+}
+
+.bank-info-row {
+  display: flex;
+  margin-bottom: 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.bank-info-label {
+  width: 150px;
+  color: var(--color-text-light);
+}
+
+.bank-info-value {
+  flex: 1;
+  font-weight: 500;
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+  transition: background-color 0.2s ease;
+}
+
+.copy-btn:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.copy-btn.copied {
+  color: #198754;
+}
+
+.copy-btn.copied::after {
+  content: '✓';
+  margin-left: 0.25rem;
+}

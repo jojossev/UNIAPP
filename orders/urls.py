@@ -7,6 +7,9 @@ urlpatterns = [
     # Historique des commandes de l'utilisateur connecté
     path('historique/', views.historique_commandes, name='historique'),
     
+    # Création d'une nouvelle commande
+    path('nouvelle-commande/', views.creer_commande, name='creer_commande'),
+    
     # Détail d'une commande spécifique
     path('commande/<int:commande_id>/', views.detail_commande, name='detail_commande'),
     

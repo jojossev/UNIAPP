@@ -87,6 +87,7 @@ class DetailProduitView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         produit = self.get_object()
+        user = self.request.user
         
         # Produits similaires (même catégorie)
         produits_similaires = Produit.objects.filter(
@@ -94,7 +95,27 @@ class DetailProduitView(DetailView):
             est_actif=True
         ).exclude(id=produit.id)[:4]
         
-        context['produits_similaires'] = produits_similaires
+        # Vérifier si l'utilisateur a déjà laissé un avis
+        user_has_reviewed = False
+        if user.is_authenticated:
+            user_has_reviewed = produit.avis.filter(utilisateur=user).exists()
+        
+        # Récupérer les statistiques d'évaluation
+        rating_stats = produit.get_rating_stats()
+        rating_percentages = produit.get_rating_percentages()
+        average_rating = produit.average_rating
+        total_reviews = produit.rating_count
+        
+        # Ajouter les variables au contexte
+        context.update({
+            'produits_similaires': produits_similaires,
+            'user_has_reviewed': user_has_reviewed,
+            'rating_stats': rating_stats,
+            'rating_percentages': rating_percentages,
+            'average_rating': average_rating,
+            'total_reviews': total_reviews,
+        })
+        
         return context
 
 

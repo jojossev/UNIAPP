@@ -1,0 +1,149 @@
+/* ==========================================================================
+   PAGES : COMPTES UTILISATEURS
+   Styles spécifiques aux pages de gestion de compte utilisateur
+   ========================================================================== */
+
+/* Styles pour les champs de formulaire du profil utilisateur */
+.profile-form .form-control,
+.profile-form .form-select {
+    height: 45px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9375rem;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--color-border);
+}
+
+/* Ajustement pour les champs de formulaire dans les onglets */
+.tab-pane .form-control,
+.tab-pane .form-select {
+    height: 45px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9375rem;
+}
+
+/* Style pour les étiquettes des champs */
+.profile-form label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+}
+
+/* Ajustement pour les boutons */
+.profile-form .btn {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+}
+
+/* Style pour les cartes de formulaire */
+.profile-form .card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.profile-form .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid var(--color-border);
+    padding: 1rem 1.25rem;
+}
+
+.profile-form .card-body {
+    padding: 1.5rem;
+}
+
+/* Ajustement pour les champs de formulaire dans les lignes */
+.row.g-3 .form-control,
+.row.g-3 .form-select {
+    width: 100%;
+}
+
+/* Style pour les messages d'erreur et d'aide */
+.invalid-feedback {
+    font-size: 0.8125rem;
+    margin-top: 0.25rem;
+}
+
+.form-text {
+    font-size: 0.8125rem;
+    color: #6c757d;
+}
+
+/* Ajustement pour les champs de formulaire en lecture seule */
+.form-control[readonly] {
+    background-color: #f8f9fa;
+    opacity: 1;
+}
+
+/* Style pour les onglets de navigation */
+.nav-tabs .nav-link {
+    color: var(--color-text);
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid transparent;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--color-primary);
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom-color: var(--color-primary);
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: transparent;
+    border-bottom-color: var(--color-border);
+}
+
+/* Ajustement pour les champs de formulaire dans les modales */
+.modal .form-control,
+.modal .form-select {
+    height: 45px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9375rem;
+}
+
+/* Style pour les boutons de téléchargement de fichier */
+.form-control[type="file"] {
+    padding: 0.5rem;
+    height: auto;
+}
+
+/* Ajustement pour les champs de formulaire dans les tableaux */
+.table .form-control,
+.table .form-select {
+    height: 38px;
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+}
+
+/* Style pour les champs de formulaire désactivés */
+.form-control:disabled,
+.form-select:disabled {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+/* Ajustement pour les champs de formulaire dans les groupes de saisie */
+.input-group-text {
+    height: 45px;
+    font-size: 0.9375rem;
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border: 1px solid var(--color-border);
+}
+
+/* Style pour les champs de formulaire avec icônes */
+.has-icon .form-control {
+    padding-left: 2.5rem;
+}
+
+.has-icon .icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 10;
+}

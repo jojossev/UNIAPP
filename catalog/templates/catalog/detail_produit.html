@@ -1,5 +1,7 @@
 {% extends 'catalog/base_catalog.html' %}
 {% load static %}
+{% load ecommerce_filters %}
+{% load dict_filters %}
 
 {% block title %}{{ produit.nom }} - Détails du produit{% endblock %}
 
@@ -56,7 +58,7 @@
                 {% endfor %}
             </div>
             <a href="#avis" class="text-muted small ms-2">
-                ({{ produit.nombre_avis }} avis)
+                ({{ total_reviews }} avis)
             </a>
         </div>
         
@@ -65,18 +67,18 @@
             {% if produit.est_en_promotion %}
                 <span class="h3 text-danger">{{ produit.prix_promotionnel }} €</span>
                 <span class="text-muted text-decoration-line-through ms-2">{{ produit.prix }} €</span>
-                <span class="badge bg-danger ms-2">-{{ produit.pourcentage_promotion }}%</span>
+                <span class="badge bg-danger ms-2">-{{ produit.get_pourcentage_promotion }}%</span>
             {% else %}
                 <span class="h3">{{ produit.prix }} €</span>
             {% endif %}
         </div>
         
         <!-- Disponibilité -->
-        <div class="alert {% if produit.stock > 5 %}alert-success{% elif produit.stock > 0 %}alert-warning{% else %}alert-danger{% endif %} mb-4">
-            {% if produit.stock > 5 %}
-                <i class="fas fa-check-circle me-1"></i> En stock ({{ produit.stock }} disponibles)
-            {% elif produit.stock > 0 %}
-                <i class="fas fa-exclamation-triangle me-1"></i> Plus que {{ produit.stock }} exemplaire(s) disponible(s) !
+        <div class="alert {% if produit.quantite > 5 %}alert-success{% elif produit.quantite > 0 %}alert-warning{% else %}alert-danger{% endif %} mb-4">
+            {% if produit.quantite > 5 %}
+                <i class="fas fa-check-circle me-1"></i> En stock ({{ produit.quantite }} disponibles)
+            {% elif produit.quantite > 0 %}
+                <i class="fas fa-exclamation-triangle me-1"></i> Plus que {{ produit.quantite }} exemplaire(s) disponible(s) !
             {% else %}
                 <i class="fas fa-times-circle me-1"></i> Rupture de stock
             {% endif %}
@@ -94,20 +96,21 @@
                 <div class="col-md-4">
                     <label for="quantite" class="form-label">Quantité</label>
                     <input type="number" class="form-control" id="quantite" name="quantite" 
-                           min="1" value="1" max="{{ produit.stock }}" required>
+                           min="1" value="1" max="{{ produit.quantite }}" {% if produit.quantite == 0 %}disabled{% endif %} required>
                 </div>
                 
                 <div class="col-md-8 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary btn-lg w-100" 
-                            {% if produit.stock == 0 %}disabled{% endif %}>
+                            {% if produit.quantite == 0 %}disabled{% endif %}>
                         <i class="fas fa-shopping-cart me-2"></i>
-                        {% if produit.stock > 0 %}Ajouter au panier{% else %}Rupture de stock{% endif %}
+                        {% if produit.quantite > 0 %}Ajouter au panier{% else %}Rupture de stock{% endif %}
                     </button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+{% endblock %}
 
 {% block extra_js %}
 <script>
@@ -182,6 +185,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     Caractéristiques
                 </button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="avis-tab" data-bs-toggle="tab" 
+                        data-bs-target="#avis" type="button" role="tab" 
+                        aria-controls="avis" aria-selected="false">
+                    Avis ({{ produit.avis.count }})
+                </button>
+            </li>
         </ul>
         
         <div class="tab-content p-3 border border-top-0 rounded-bottom" id="productTabsContent">
@@ -209,42 +219,176 @@ document.addEventListener('DOMContentLoaded', function() {
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Avis -->
+            <div class="tab-pane fade" id="avis" role="tabpanel" aria-labelledby="avis-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="h5 mb-0">Avis des clients</h4>
+                    {% if produit.avis.exists %}
+                    <a href="#" class="btn btn-outline-primary btn-sm">
+                        Voir tous les avis
+                    </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Note moyenne -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-3 text-center">
+                                <div class="display-4 fw-bold text-primary mb-1">
+                                    {{ average_rating|default:0|floatformat:1 }}
+                                </div>
+                                <div class="mb-2">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= average_rating|floatformat:0|add:'0' %}
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        {% else %}
+                                            <i class="bi bi-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="text-muted small">
+                                    {{ total_reviews }} avis
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="d-flex flex-column">
+                                    {% for i in "54321" %}
+                                        {% with i_num=i|stringformat:'i'|add:0 %}
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="text-nowrap me-2" style="width: 40px;">
+                                                {{ i }} <i class="bi bi-star-fill text-warning"></i>
+                                            </div>
+                                            <div class="progress flex-grow-1" style="height: 10px;">
+                                                <div class="progress-bar bg-warning" 
+                                                    role="progressbar" 
+                                                    style="width: {{ rating_percentages|get_item:i_num|default:0 }}%"
+                                                    aria-valuenow="{{ rating_percentages|get_item:i_num|default:0 }}" 
+                                                    aria-valuemin="0" 
+                                                    aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                            <div class="ms-2 text-muted small" style="width: 30px; text-align: right;">
+                                                {{ rating_stats|get_item:i_num|default:0 }}
+                                            </div>
+                                        </div>
+                                        {% endwith %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Résumé IA des avis -->
+                {% if produit.avis.exists %}
+                    {% include 'ai_user/review_summary.html' %}
+                {% endif %}
+                
+                <!-- Liste des avis -->
+                <div class="reviews-list">
+                    {% for avis in produit.avis.all|slice:":3" %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2">
+                                            {% if avis.utilisateur.profile and avis.utilisateur.profile.avatar %}
+                                                <img src="{{ avis.utilisateur.profile.avatar.url }}" 
+                                                     alt="{{ avis.utilisateur.username }}" 
+                                                     class="rounded-circle" 
+                                                     width="40" 
+                                                     height="40">
+                                            {% else %}
+                                                <img src="{% static 'images/default-avatar.png' %}" 
+                                                     alt="{{ avis.utilisateur.username }}" 
+                                                     class="rounded-circle" 
+                                                     width="40" 
+                                                     height="40">
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ avis.utilisateur.get_full_name|default:avis.utilisateur.username }}</h6>
+                                            <div class="text-muted small">
+                                                {% for i in '12345' %}
+                                                    {% if forloop.counter <= avis.note %}
+                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                    {% else %}
+                                                        <i class="bi bi-star text-warning"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <span class="ms-1">{{ avis.date_creation|date:"d/m/Y" }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <h5 class="h6 mb-2">{{ avis.titre }}</h5>
+                                <p class="mb-2">{{ avis.commentaire|linebreaksbr }}</p>
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-secondary me-2">
+                                            <i class="bi bi-chat-left"></i> Répondre
+                                        </button>
+                                    </div>
+                                    <div class="text-muted small">
+                                        {% if avis.date_mise_a_jour > avis.date_creation %}
+                                            <span>Modifié le {{ avis.date_mise_a_jour|date:"d/m/Y" }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="alert alert-info mb-0">
+                            Aucun avis pour le moment. Soyez le premier à laisser un avis !
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                {% if produit.avis.count > 3 %}
+                    <div class="text-center mt-3">
+                        <a href="{% url 'reviews:product_reviews' produit.id %}" class="btn btn-outline-primary">
+                            Voir tous les avis ({{ produit.avis.count }})
+                        </a>
+                    </div>
+                {% endif %}
+                
+                {% if user.is_authenticated %}
+    {% if not user_has_reviewed %}
+        <div class="text-center mt-4 pt-3 border-top">
+            <a href="{% url 'catalog:avis_ajouter' produit.slug %}" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-2"></i>Donner votre avis
+            </a>
+        </div>
+    {% endif %}
+{% else %}
+    <div class="text-center mt-4 pt-3 border-top">
+        <p class="mb-3">Connectez-vous pour donner votre avis sur ce produit</p>
+        <a href="{% url 'accounts:login' %}?next={% url 'catalog:avis_ajouter' produit.slug %}" class="btn btn-primary">
+            Se connecter
+        </a>
+    </div>
+{% endif %}
+
+{# Boutons modifier/supprimer pour l'auteur de l'avis #}
+{% for avis in produit.avis.all %}
+    {% if user.is_authenticated and avis.utilisateur == user %}
+        <div class="d-flex gap-2 mt-1">
+            <a href="{% url 'catalog:avis_modifier' avis.pk %}" class="btn btn-sm btn-outline-primary">Modifier</a>
+            <a href="{% url 'catalog:avis_supprimer' avis.pk %}" class="btn btn-sm btn-outline-danger">Supprimer</a>
+        </div>
+    {% endif %}
+{% endfor %}
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Produits similaires -->
-{% if produits_similaires %}
+<!-- Recommandations de produits similaires par IA -->
 <div class="mt-5">
     <h3 class="h4 mb-4">Vous aimerez peut-être aussi</h3>
-    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
-        {% for produit in produits_similaires %}
-        <div class="col">
-            <div class="card h-100">
-                <a href="{% url 'catalog:detail_produit' produit.slug %}">
-                    {% if produit.images.exists %}
-                        <img src="{{ produit.images.first.image.url }}" class="card-img-top" alt="{{ produit.nom }}">
-                    {% else %}
-                        <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Image non disponible">
-                    {% endif %}
-                </a>
-                <div class="card-body">
-                    <h5 class="card-title h6">
-                        <a href="{% url 'catalog:detail_produit' produit.slug %}" class="text-decoration-none text-dark">
-                            {{ produit.nom|truncatechars:40 }}
-                        </a>
-                    </h5>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="fw-bold">{{ produit.prix }} €</span>
-                        {% if produit.est_nouveau %}
-                            <span class="badge bg-success">Nouveau</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+    {% include 'ai_user/product_recommendations.html' %}
 </div>
-{% endif %}
-{% endblock %}

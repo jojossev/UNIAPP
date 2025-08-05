@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-3">{{ view.object.pk|yesno:"Modifier,Ajouter" }} un avis</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="mb-3">
+            <label class="form-label">Note :</label>
+            {{ form.note }}
+            {% for error in form.note.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Titre :</label>
+            {{ form.titre }}
+            {% for error in form.titre.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Commentaire :</label>
+            {{ form.commentaire }}
+            {% for error in form.commentaire.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary">{{ view.object.pk|yesno:"Modifier,Publier" }} l'avis</button>
+        <a href="{{ view.object.produit.get_absolute_url|default:produit.get_absolute_url }}" class="btn btn-secondary ms-2">Annuler</a>
+    </form>
+</div>
+{% endblock %}

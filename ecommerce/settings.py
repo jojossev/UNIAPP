@@ -28,6 +28,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Configuration du site
+SITE_NAME = "UNIAPP E-commerce"
+
+# Configuration du modèle utilisateur personnalisé
+AUTH_USER_MODEL = 'accounts.User'
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -168,7 +174,7 @@ LOGOUT_REDIRECT_URL = 'home'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configuration pour le nom du site
-SITE_NAME = 'Mon E-commerce'
+SITE_NAME = 'Silence d\'or chez mermose'
 SITE_URL = 'http://localhost:8000'
 
 # Configuration des emails (pour la réinitialisation de mot de passe)

@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Passer commande - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Informations de livraison</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'orders:creer_commande' %}">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="adresse_livraison" class="form-label">Adresse de livraison</label>
+                            <input type="text" class="form-control" id="adresse_livraison" name="adresse_livraison" 
+                                   value="{{ request.user.profile.adresse|default:'' }}" required>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="code_postal" class="form-label">Code postal</label>
+                                <input type="text" class="form-control" id="code_postal" name="code_postal" 
+                                       value="{{ request.user.profile.code_postal|default:'' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="ville" class="form-label">Ville</label>
+                                <input type="text" class="form-control" id="ville" name="ville" 
+                                       value="{{ request.user.profile.ville|default:'' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="pays" class="form-label">Pays</label>
+                                <input type="text" class="form-control" id="pays" name="pays" 
+                                       value="{{ request.user.profile.pays|default:'' }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-credit-card me-2"></i>Payer et confirmer la commande
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h3 class="h6 mb-0">Récapitulatif de la commande</h3>
+                </div>
+                <div class="card-body">
+                    <h6>Votre panier ({{ articles|length }} article{{ articles|length|pluralize }})</h6>
+                    
+                    <ul class="list-group list-group-flush mb-3">
+                        {% for article in articles %}
+                            <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    {% if article.produit.images.exists %}
+                                        <img src="{{ article.produit.images.first.image.url }}" 
+                                             alt="{{ article.produit.nom }}" 
+                                             class="img-thumbnail me-3" 
+                                             style="width: 60px; height: 60px; object-fit: cover;">
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-0">{{ article.produit.nom }}</h6>
+                                        <small class="text-muted">Quantité: {{ article.quantite }}</small>
+                                    </div>
+                                </div>
+                                <span class="fw-bold">{{ article.sous_total|floatformat:2 }} €</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sous-total</span>
+                        <span>{{ panier.total|floatformat:2 }} €</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Frais de livraison</span>
+                        <span>Gratuit</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Total TTC</span>
+                        <span>{{ panier.total|floatformat:2 }} €</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6 class="card-title mb-3">Moyens de paiement acceptés</h6>
+                    <div class="d-flex gap-2">
+                        <i class="fab fa-cc-visa fa-2x text-dark"></i>
+                        <i class="fab fa-cc-mastercard fa-2x text-dark"></i>
+                        <i class="fab fa-cc-paypal fa-2x text-dark"></i>
+                    </div>
+                    <p class="small text-muted mt-2 mb-0">Paiement sécurisé par notre partenaire de paiement.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Script pour formater automatiquement le code postal
+const codePostalInput = document.getElementById('code_postal');
+if (codePostalInput) {
+    codePostalInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 5) {
+            value = value.substr(0, 5);
+        }
+        e.target.value = value;
+    });
+}
+</script>
+{% endblock %}

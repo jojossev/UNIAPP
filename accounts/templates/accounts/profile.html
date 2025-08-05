@@ -1,26 +1,86 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
 
 {% block title %}Mon Profil - E-commerce{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/_accounts.css' %}">
+<style>
+    .profile-picture-container {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        overflow: hidden;
+        position: relative;
+        border: 3px solid #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .profile-picture {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .profile-initials {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 60px;
+        color: #6c757d;
+        background-color: #f0f0f0;
+    }
+    .change-photo-btn {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.5);
+        color: white;
+        text-align: center;
+        padding: 5px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    .profile-picture-container:hover .change-photo-btn {
+        opacity: 1;
+    }
+    #id_profile_picture {
+        display: none;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="row">
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <div class="profile-avatar" style="width: 150px; height: 150px; margin: 0 auto; border-radius: 50%; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 60px; color: #6c757d;">
-                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="card-body text-center">
+                <form method="post" enctype="multipart/form-data" id="profile-picture-form">
+                    {% csrf_token %}
+                    <div class="profile-picture-container mb-3">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Photo de profil" class="profile-picture">
+                        {% else %}
+                            <div class="profile-initials">
+                                {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                            </div>
+                        {% endif %}
+                        <label for="id_profile_picture" class="change-photo-btn">
+                            <i class="fas fa-camera"></i> Changer
+                        </label>
+                        {{ form.profile_picture }}
                     </div>
-                </div>
-                <h4>{{ user.get_full_name|default:user.username }}</h4>
-                <p class="text-muted mb-1">
-                    {% if user.role == 'admin' %}
-                        <span class="badge bg-danger">Administrateur</span>
-                    {% else %}
-                        <span class="badge bg-primary">Client</span>
-                    {% endif %}
-                </p>
-                <p class="text-muted">Membre depuis {{ user.date_joined|date:"F Y" }}</p>
+                </form>
+                <h4 class="profile-name">{{ user.get_full_name|default:user.username }}</h4>
+                {% if user.role == 'admin' %}
+                    <span class="user-role">Administrateur</span>
+                {% else %}
+                    <span class="user-role">Client</span>
+                {% endif %}
+                <span class="join-date">Membre depuis {{ user.date_joined|date:"F Y" }}</span>
                 
                 <div class="d-flex justify-content-center gap-2 mb-3">
                     <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-primary btn-sm">
@@ -80,34 +140,154 @@
                     </div>
                 </div>
                 <hr>
-                <div class="row mb-3">
-                    <div class="col-sm-3 fw-bold">Adresse</div>
-                    <div class="col-sm-9">
-                        {% if user.address %}
-                            {{ user.address }}<br>
-                            {% if user.postal_code %}{{ user.postal_code }}{% endif %}
-                            {% if user.city %}{{ user.city }}{% endif %}<br>
-                            {% if user.country %}{{ user.country }}{% endif %}
-                        {% else %}
-                            Non renseignée
-                        {% endif %}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Adresse</div>
+                        <div class="col-sm-9">
+                            {% if user.address %}
+                                {{ user.address }}<br>
+                                {% if user.postal_code %}{{ user.postal_code }}{% endif %}
+                                {% if user.city %}{{ user.city }}{% endif %}<br>
+                                {% if user.country %}{{ user.country }}{% endif %}
+                                <a href="#" class="btn btn-sm btn-outline-primary mt-2">
+                                    <i class="fas fa-edit me-1"></i> Modifier l'adresse
+                                </a>
+                            {% else %}
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="{{ form.postal_code.id_for_label }}" class="form-label">Code postal</label>
+                                        {{ form.postal_code|add_class:"form-control form-control-md" }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.city.id_for_label }}" class="form-label">Ville</label>
+                                        {{ form.city|add_class:"form-control form-control-md" }}
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="{{ form.country.id_for_label }}" class="form-label">Pays</label>
+                                        {{ form.country|add_class:"form-select form-select-md" }}
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-1"></i> Enregistrer les modifications
+                                    </button>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Dernières commandes</h5>
+                </form>
             </div>
             <div class="card-body text-center py-5">
                 <div class="text-muted mb-3">
                     <i class="bi bi-cart-x" style="font-size: 3rem;"></i>
                     <p class="mt-2">Aucune commande pour le moment</p>
                 </div>
-                <a href="#" class="btn btn-primary">Voir nos produits</a>
+                <a href="{% url 'catalog:accueil' %}" class="btn btn-primary">Voir nos produits</a>
             </div>
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const profilePictureInput = document.getElementById('id_profile_picture');
+        const profilePictureForm = document.getElementById('profile-picture-form');
+        
+        if (profilePictureInput && profilePictureForm) {
+            // Gérer le changement de photo
+            profilePictureInput.addEventListener('change', function(e) {
+                const file = this.files[0];
+                if (file) {
+                    // Afficher un aperçu immédiat de l'image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        updateProfilePicture(e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                    
+                    // Créer un FormData pour la soumission AJAX
+                    const formData = new FormData(profilePictureForm);
+                    
+                    // Ajouter le CSRF token manuellement
+                    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                    
+                    // Effectuer la requête AJAX
+                    fetch(profilePictureForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrftoken
+                        },
+                        credentials: 'same-origin'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Mettre à jour l'image avec la nouvelle URL pour éviter les problèmes de cache
+                            if (data.profile_picture_url) {
+                                updateProfilePicture(data.profile_picture_url + '?t=' + new Date().getTime());
+                            }
+                            showAlert('Votre photo de profil a été mise à jour avec succès !', 'success');
+                        } else {
+                            showAlert('Une erreur est survenue lors de la mise à jour de votre photo de profil.', 'danger');
+                            console.error('Erreur:', data.errors || 'Erreur inconnue');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la requête:', error);
+                        showAlert('Une erreur est survenue lors de la communication avec le serveur.', 'danger');
+                    });
+                }
+            });
+        }
+        
+        // Fonction pour mettre à jour l'affichage de la photo de profil
+        function updateProfilePicture(imageSrc) {
+            let profilePicture = document.querySelector('.profile-picture');
+            const profileInitials = document.querySelector('.profile-initials');
+            
+            if (profilePicture) {
+                // Mettre à jour l'image existante
+                profilePicture.src = imageSrc;
+            } else if (profileInitials) {
+                // Remplacer les initiales par une image
+                const newImg = document.createElement('img');
+                newImg.src = imageSrc;
+                newImg.alt = 'Photo de profil';
+                newImg.className = 'profile-picture';
+                profileInitials.parentNode.replaceChild(newImg, profileInitials);
+            }
+        }
+        
+        // Fonction pour afficher des messages d'alerte
+        function showAlert(message, type) {
+            // Supprimer les alertes existantes
+            const existingAlerts = document.querySelectorAll('.alert-dismissible');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            // Créer une nouvelle alerte
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+            alertDiv.role = 'alert';
+            alertDiv.style.zIndex = '1050';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            // Ajouter l'alerte en haut de la page
+            document.body.appendChild(alertDiv);
+            
+            // Supprimer automatiquement l'alerte après 5 secondes
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+    });
+</script>
 {% endblock %}

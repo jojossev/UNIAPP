@@ -1,0 +1,29 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block after_field_sets %}
+{{ block.super }}
+<script type="text/javascript">
+// Fonction pour forcer le rechargement des images
+function refreshImages() {
+    document.querySelectorAll('img[src^="/media/"]').forEach(img => {
+        const src = img.src;
+        img.src = '';
+        img.src = src + '?' + new Date().getTime();
+    });
+}
+
+// Rafraîchir les images au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    refreshImages();
+    
+    // Rafraîchir les images après la sauvegarde
+    const saveButtons = document.querySelectorAll('input[type="submit"][name="_save"]');
+    saveButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            setTimeout(refreshImages, 1000);
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static i18n crispy_forms_tags %}
+
+{% block title %}{% if form.instance.id %}{% trans 'Modifier votre avis' %}{% else %}{% trans 'Laisser un avis' %}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h2 class="h5 mb-0">
+                        <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-dark me-2">
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                        {% if form.instance.id %}
+                            {% trans 'Modifier votre avis' %}
+                        {% else %}
+                            {% trans 'Laisser un avis' %}
+                        {% endif %}
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center me-3" style="width: 80px; height: 80px;">
+                                <i class="bi bi-image text-muted" style="font-size: 2rem;"></i>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h5 class="mb-1">{{ product.name }}</h5>
+                            <div class="text-muted">{{ product.category.name }}</div>
+                        </div>
+                    </div>
+
+                    <form method="post" id="reviewForm">
+                        {% csrf_token %}
+                        
+                        <!-- Champ de notation -->
+                        <div class="mb-4">
+                            <label class="form-label d-block">{{ form.rating.label }}</label>
+                            <div class="rating-input d-flex flex-row-reverse justify-content-end mb-2">
+                                {% for choice in form.rating %}
+                                    <input type="radio" id="id_rating_{{ forloop.counter }}" name="rating" value="{{ choice.data.value }}" 
+                                           class="d-none" {% if form.rating.value == choice.data.value %}checked{% endif %}>
+                                    <label for="id_rating_{{ forloop.counter }}" class="star-rating-label" title="{{ choice.data.label }}">
+                                        <i class="bi bi-star-fill"></i>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                            {% if form.rating.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.rating.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Champ titre -->
+                        <div class="mb-3">
+                            {{ form.title|as_crispy_field }}
+                        </div>
+                        
+                        <!-- Champ commentaire -->
+                        <div class="mb-4">
+                            {{ form.comment|as_crispy_field }}
+                            <div class="form-text">
+                                {% trans 'Votre avis aidera d'autres clients à faire leur choix.' %}
+                            </div>
+                        </div>
+                        
+                        <!-- Boutons de soumission -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ product.get_absolute_url }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-1"></i> {% trans 'Annuler' %}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check2 me-1"></i>
+                                {% if form.instance.id %}
+                                    {% trans 'Mettre à jour' %}
+                                {% else %}
+                                    {% trans 'Publier mon avis' %}
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Styles pour la notation par étoiles */
+    .rating-input {
+        direction: rtl;
+        unicode-bidi: bidi-override;
+    }
+    
+    .rating-input input[type="radio"] {
+        display: none;
+    }
+    
+    .rating-input label {
+        color: #ddd;
+        font-size: 2rem;
+        padding: 0 3px;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    
+    .rating-input label:hover,
+    .rating-input label:hover ~ label,
+    .rating-input input[type="radio"]:checked ~ label {
+        color: #ffc107;
+    }
+    
+    .rating-input input[type="radio"]:checked ~ label {
+        color: #ffc107;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion de la sélection des étoiles
+        const stars = document.querySelectorAll('.rating-input input[type="radio"]');
+        const starLabels = document.querySelectorAll('.star-rating-label');
+        
+        stars.forEach((star, index) => {
+            star.addEventListener('change', function() {
+                // Mettre à jour les étoiles sélectionnées
+                starLabels.forEach((label, i) => {
+                    if (i >= (5 - index)) {
+                        label.querySelector('i').classList.add('text-warning');
+                    } else {
+                        label.querySelector('i').classList.remove('text-warning');
+                    }
+                });
+            });
+            
+            // Initialiser les étoiles si une note existe déjà
+            if (star.checked) {
+                star.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+</script>
+{% endblock %}

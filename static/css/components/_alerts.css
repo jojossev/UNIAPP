@@ -1,0 +1,342 @@
+/* ==========================================================================
+   COMPOSANT : ALERTES ET MESSAGES
+   Styles pour les alertes, notifications et messages système
+   ========================================================================== */
+
+/* Style de base pour les alertes */
+.alert {
+  position: relative;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+/* En-tête des alertes */
+.alert-heading {
+  color: inherit;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+/* Lien dans les alertes */
+.alert-link {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* Bouton de fermeture */
+.alert-dismissible {
+  padding-right: 3rem;
+}
+
+.alert-dismissible .btn-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  padding: 1.25rem 1rem;
+}
+
+/* Variantes d'alertes */
+.alert-primary {
+  color: #002b5a;
+  background-color: #e6f0ff;
+  border-color: #cce0ff;
+}
+
+.alert-primary .alert-link {
+  color: #002040;
+}
+
+.alert-secondary {
+  color: #006633;
+  background-color: #e6f5eb;
+  border-color: #ccebd6;
+}
+
+.alert-secondary .alert-link {
+  color: #004d24;
+}
+
+.alert-success {
+  color: #0f5132;
+  background-color: #d1e7dd;
+  border-color: #badbcc;
+}
+
+.alert-success .alert-link {
+  color: #0c4128;
+}
+
+.alert-danger {
+  color: #842029;
+  background-color: #f8d7da;
+  border-color: #f5c2c7;
+}
+
+.alert-danger .alert-link {
+  color: #6a1a21;
+}
+
+.alert-warning {
+  color: #664d03;
+  background-color: #fff3cd;
+  border-color: #ffecb5;
+}
+
+.alert-warning .alert-link {
+  color: #523e02;
+}
+
+.alert-info {
+  color: #055160;
+  background-color: #cff4fc;
+  border-color: #b6effb;
+}
+
+.alert-info .alert-link {
+  color: #04414d;
+}
+
+.alert-light {
+  color: #636464;
+  background-color: #fefefe;
+  border-color: #fdfdfe;
+}
+
+.alert-light .alert-link {
+  color: #4f5050;
+}
+
+.alert-dark {
+  color: #141619;
+  background-color: #d3d3d4;
+  border-color: #bcbebf;
+}
+
+.alert-dark .alert-link {
+  color: #101214;
+}
+
+/* Alertes avec icônes */
+.alert-icon {
+  display: flex;
+  align-items: flex-start;
+}
+
+.alert-icon i {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+/* Alertes en ligne */
+.alert-inline {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  margin: 0;
+}
+
+/* Toast notifications */
+.toast-container {
+  position: fixed;
+  z-index: var(--z-index-toast);
+  width: 100%;
+  max-width: 400px;
+  pointer-events: none;
+}
+
+.toast-container.top-right {
+  top: 1rem;
+  right: 1rem;
+}
+
+.toast-container.top-left {
+  top: 1rem;
+  left: 1rem;
+}
+
+.toast-container.bottom-right {
+  bottom: 1rem;
+  right: 1rem;
+}
+
+.toast-container.bottom-left {
+  bottom: 1rem;
+  left: 1rem;
+}
+
+.toast {
+  position: relative;
+  width: 100%;
+  pointer-events: auto;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  margin-bottom: 0.75rem;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-header {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  background-clip: padding-box;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-top-left-radius: calc(var(--border-radius-sm) - 1px);
+  border-top-right-radius: calc(var(--border-radius-sm) - 1px);
+}
+
+.toast-body {
+  padding: 1rem;
+  word-wrap: break-word;
+}
+
+/* Messages flash */
+.messages {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: var(--z-index-toast);
+  width: 100%;
+  max-width: 400px;
+  pointer-events: none;
+}
+
+.message {
+  position: relative;
+  width: 100%;
+  pointer-events: auto;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 0.75rem;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s ease;
+}
+
+.message.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.message-header {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-top-left-radius: calc(var(--border-radius-sm) - 1px);
+  border-top-right-radius: calc(var(--border-radius-sm) - 1px);
+}
+
+.message-body {
+  padding: 1rem;
+}
+
+.message-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  opacity: 0.5;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Thème sombre */
+[data-bs-theme="dark"] .alert {
+  color: #fff;
+}
+
+[data-bs-theme="dark"] .alert-primary {
+  color: #e6f0ff;
+  background-color: rgba(0, 43, 90, 0.8);
+  border-color: rgba(0, 43, 90, 0.9);
+}
+
+[data-bs-theme="dark"] .alert-secondary {
+  color: #e6f5eb;
+  background-color: rgba(0, 102, 51, 0.8);
+  border-color: rgba(0, 102, 51, 0.9);
+}
+
+[data-bs-theme="dark"] .alert-success {
+  color: #d1e7dd;
+  background-color: rgba(15, 81, 50, 0.8);
+  border-color: rgba(15, 81, 50, 0.9);
+}
+
+[data-bs-theme="dark"] .alert-danger {
+  color: #f8d7da;
+  background-color: rgba(132, 32, 41, 0.8);
+  border-color: rgba(132, 32, 41, 0.9);
+}
+
+[data-bs-theme="dark"] .alert-warning {
+  color: #fff3cd;
+  background-color: rgba(102, 77, 3, 0.8);
+  border-color: rgba(102, 77, 3, 0.9);
+}
+
+[data-bs-theme="dark"] .alert-info {
+  color: #cff4fc;
+  background-color: rgba(5, 81, 96, 0.8);
+  border-color: rgba(5, 81, 96, 0.9);
+}
+
+[data-bs-theme="dark"] .alert-light {
+  color: #636464;
+  background-color: rgba(254, 254, 254, 0.8);
+  border-color: rgba(253, 253, 254, 0.9);
+}
+
+[data-bs-theme="dark"] .alert-dark {
+  color: #d3d3d4;
+  background-color: rgba(20, 22, 25, 0.8);
+  border-color: rgba(20, 22, 25, 0.9);
+}
+
+[data-bs-theme="dark"] .toast,
+[data-bs-theme="dark"] .message {
+  background-color: #2d3748;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-bs-theme="dark"] .toast-header,
+[data-bs-theme="dark"] .message-header {
+  background-color: #2d3748;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+[data-bs-theme="dark"] .message-close {
+  color: #fff;
+  opacity: 0.75;
+}
+
+[data-bs-theme="dark"] .toast-body,
+[data-bs-theme="dark"] .message-body {
+  color: #e2e8f0;
+}

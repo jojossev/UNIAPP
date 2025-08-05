@@ -1,0 +1,295 @@
+/* ==========================================================================
+   COMPOSANT : BOUTONS
+   Styles pour les boutons et éléments cliquables
+   ========================================================================== */
+
+/* Style de base pour tous les boutons */
+.btn {
+  display: inline-block;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+/* Bouton principal */
+.btn-primary {
+  color: #fff;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-primary:hover {
+  background-color: #002b5a;
+  border-color: #002b5a;
+}
+
+.btn-primary:focus,
+.btn-primary.focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.5);
+}
+
+/* Bouton secondaire */
+.btn-secondary {
+  color: #fff;
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.btn-secondary:hover {
+  background-color: #008a4a;
+  border-color: #008a4a;
+}
+
+/* Bouton d'accent */
+.btn-accent {
+  color: #fff;
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.btn-accent:hover {
+  background-color: #e05a00;
+  border-color: #e05a00;
+}
+
+/* Bouton de succès */
+.btn-success {
+  color: #fff;
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.btn-success:hover {
+  background-color: #2e7d32;
+  border-color: #2e7d32;
+}
+
+/* Bouton de danger */
+.btn-danger {
+  color: #fff;
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.btn-danger:hover {
+  background-color: #c62828;
+  border-color: #c62828;
+}
+
+/* Bouton d'avertissement */
+.btn-warning {
+  color: #212529;
+  background-color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.btn-warning:hover {
+  background-color: #e65100;
+  border-color: #e65100;
+  color: #fff;
+}
+
+/* Bouton d'information */
+.btn-info {
+  color: #fff;
+  background-color: var(--color-info);
+  border-color: var(--color-info);
+}
+
+.btn-info:hover {
+  background-color: #0277bd;
+  border-color: #0277bd;
+}
+
+/* Bouton clair */
+.btn-light {
+  color: #212529;
+  background-color: var(--color-bg-light);
+  border-color: var(--color-bg-light);
+}
+
+.btn-light:hover {
+  background-color: #e0e0e0;
+  border-color: #e0e0e0;
+}
+
+/* Bouton sombre */
+.btn-dark {
+  color: #fff;
+  background-color: var(--color-text);
+  border-color: var(--color-text);
+}
+
+.btn-dark:hover {
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+/* Bouton de lien */
+.btn-link {
+  font-weight: 400;
+  color: var(--color-primary);
+  text-decoration: none;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+.btn-link:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+  background-color: transparent;
+  border: none;
+}
+
+/* Bouton outline */
+.btn-outline-primary {
+  color: var(--color-primary);
+  background-color: transparent;
+  background-image: none;
+  border-color: var(--color-primary);
+}
+
+.btn-outline-primary:hover {
+  color: #fff;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Tailles de boutons */
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  border-radius: var(--border-radius-lg);
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Bouton block */
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+/* Bouton avec icône */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon i {
+  margin-right: 0.5rem;
+}
+
+/* Groupe de boutons */
+.btn-group {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.btn-group > .btn:not(:first-child) {
+  margin-left: -1px;
+}
+
+.btn-group > .btn:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.btn-group > .btn:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* Bouton désactivé */
+.btn:disabled,
+.btn.disabled,
+fieldset:disabled .btn {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* Bouton avec indicateur de chargement */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  color: transparent !important;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  top: 50%;
+  left: 50%;
+  margin: -0.5em 0 0 -0.5em;
+  border: 0.2em solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+  to { transform: rotate(360deg); }
+}
+
+/* Bouton flottant */
+.btn-float {
+  position: fixed;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: var(--z-index-fixed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.btn-float.bottom-right {
+  right: 24px;
+  bottom: 24px;
+}
+
+.btn-float.bottom-left {
+  left: 24px;
+  bottom: 24px;
+}
+
+/* Bouton avec badge */
+.btn-badge {
+  position: relative;
+}
+
+.btn-badge .badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 0.6rem;
+  padding: 0.25em 0.4em;
+  border-radius: 10px;
+  min-width: 1.2em;
+  height: 1.2em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import views_avis
 
 app_name = 'catalog'
 
@@ -15,6 +16,11 @@ urlpatterns = [
     
     # Détail d'un produit
     path('produit/<slug:slug>/', views.DetailProduitView.as_view(), name='detail_produit'),
+
+    # Avis produit (ajout, modification, suppression)
+    path('produit/<slug:slug>/avis/ajouter/', views_avis.AvisProduitCreateView.as_view(), name='avis_ajouter'),
+    path('avis/<int:pk>/modifier/', views_avis.AvisProduitUpdateView.as_view(), name='avis_modifier'),
+    path('avis/<int:pk>/supprimer/', views_avis.AvisProduitDeleteView.as_view(), name='avis_supprimer'),
     
     # Liste des catégories
     path('categories/', views.ListeCategoriesView.as_view(), name='liste_categories'),

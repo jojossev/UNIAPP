@@ -1,0 +1,214 @@
+/* ==========================================================================
+   THEME SOMFY - Page de paiement (Partie 3b/4) - Récapitulatif de commande
+   ========================================================================== */
+
+/* Récapitulatif de la commande */
+.order-summary {
+    background-color: #fff;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.order-summary-header {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 1rem 1.5rem;
+}
+
+.order-summary-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.order-summary-body {
+    padding: 1.5rem;
+}
+
+.order-items {
+    margin-bottom: 1.5rem;
+}
+
+.order-item {
+    display: flex;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.order-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.order-item-image {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    margin-right: 1rem;
+    flex-shrink: 0;
+    background-color: var(--background-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+.order-item-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.order-item-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.order-item-name {
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.order-item-variant {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+}
+
+.order-item-quantity {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+.order-item-price {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-left: 1rem;
+    white-space: nowrap;
+}
+
+/* Récapitulatif des frais */
+.order-summary-totals {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.order-summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.9375rem;
+}
+
+.order-summary-label {
+    color: var(--text-light);
+}
+
+.order-summary-value {
+    font-weight: 500;
+}
+
+.order-summary-total {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Bouton de confirmation */
+.btn-confirm-order {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background-color: var(--secondary-color);
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+    margin-top: 1.5rem;
+}
+
+.btn-confirm-order:hover {
+    background-color: #008a4a;
+    text-decoration: none;
+}
+
+.btn-confirm-order i {
+    margin-left: 0.5rem;
+}
+
+/* Sécurité et garanties */
+.security-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: var(--background-light);
+    border-radius: var(--border-radius-md);
+}
+
+.security-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.875rem;
+    max-width: 100px;
+}
+
+.security-badge i {
+    font-size: 1.75rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+/* Styles responsifs */
+@media (max-width: 767.98px) {
+    .order-item {
+        flex-wrap: wrap;
+    }
+    
+    .order-item-price {
+        width: 100%;
+        text-align: right;
+        margin: 0.5rem 0 0 0;
+    }
+    
+    .security-badges {
+        gap: 1rem;
+    }
+    
+    .security-badge {
+        max-width: 80px;
+        font-size: 0.75rem;
+    }
+    
+    .security-badge i {
+        font-size: 1.5rem;
+    }
+    
+    .btn-confirm-order {
+        font-size: 1rem;
+        padding: 0.875rem;
+    }
+}

@@ -1,0 +1,24 @@
+{% if suggestions %}
+<div class="suggestions-container">
+    <h3 class="suggestions-title">Suggestions personnalisées</h3>
+    <div class="suggestions-list">
+        {% for suggestion in suggestions %}
+        <div class="suggestion-item">
+            <a href="{{ suggestion.url }}" class="suggestion-link">
+                <div class="suggestion-image">
+                    <img src="{{ suggestion.image_url }}" alt="{{ suggestion.title }}" class="img-fluid">
+                </div>
+                <div class="suggestion-details">
+                    <h4 class="suggestion-name">{{ suggestion.title }}</h4>
+                    <p class="suggestion-price">{{ suggestion.price }} €</p>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="no-suggestions">
+    <p>Connectez-vous pour voir des suggestions personnalisées basées sur votre historique.</p>
+</div>
+{% endif %}

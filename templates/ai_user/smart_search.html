@@ -1,0 +1,605 @@
+<!-- templates/ai_user/smart_search.html -->
+{% load static %}
+
+<!-- Styles pour la recherche intelligente -->
+<style>
+  .search-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .search-input-group {
+    position: relative;
+    display: flex;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    padding-right: 3rem;
+    border: 1px solid #ced4da;
+    border-radius: 2rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .search-input:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+  }
+  
+  .search-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background: none;
+    border: none;
+    padding: 0 1rem;
+    color: #6c757d;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+  }
+  
+  .search-button:hover {
+    color: #495057;
+  }
+  
+  .search-button:focus {
+    outline: none;
+  }
+  
+  .search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 0.5rem 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;
+  }
+  
+  .suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.15s;
+    border-bottom: 1px solid #f8f9fa;
+  }
+  
+  .suggestion-item:last-child {
+    border-bottom: none;
+  }
+  
+  .suggestion-item:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .suggestion-item.active {
+    background-color: #f1f3f5;
+  }
+  
+  .suggestion-image {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 1rem;
+    flex-shrink: 0;
+  }
+  
+  .suggestion-details {
+    flex-grow: 1;
+    min-width: 0;
+  }
+  
+  .suggestion-title {
+    font-weight: 500;
+    margin: 0 0 0.1rem 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #212529;
+  }
+  
+  .suggestion-category {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin: 0;
+  }
+  
+  .suggestion-price {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-left: 1rem;
+    white-space: nowrap;
+  }
+  
+  .suggestion-highlight {
+    font-weight: 600;
+    color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.2rem;
+  }
+  
+  .no-suggestions {
+    padding: 1rem;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+  }
+  
+  .search-loading {
+    padding: 1rem;
+    text-align: center;
+    color: #6c757d;
+  }
+  
+  .search-loading .spinner-border {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-width: 0.15em;
+  }
+  
+  .recent-searches {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .recent-searches-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    color: #6c757d;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  .clear-recent {
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.2rem;
+  }
+  
+  .clear-recent:hover {
+    background-color: #f1f3f5;
+    color: #495057;
+  }
+  
+  .recent-search-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #495057;
+    font-size: 0.9rem;
+  }
+  
+  .recent-search-item:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .recent-search-icon {
+    margin-right: 0.75rem;
+    color: #adb5bd;
+    font-size: 1rem;
+  }
+  
+  .powered-by {
+    text-align: right;
+    padding: 0.5rem 1rem;
+    font-size: 0.7rem;
+    color: #adb5bd;
+    border-top: 1px solid #f1f3f5;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  
+  .ai-badge-sm {
+    background: #e8f4fd;
+    color: #2980b9;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: 0.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .search-container {
+      margin: 0.5rem 0;
+    }
+    
+    .search-input {
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      padding-right: 2.5rem;
+    }
+  }
+</style>
+
+<!-- Barre de recherche intelligente -->
+<div class="search-container">
+  <form id="smart-search-form" action="{% url 'catalog:recherche' %}" method="get" class="search-input-group">
+    <input type="text" 
+           id="smart-search-input" 
+           name="q" 
+           class="form-control search-input" 
+           placeholder="Rechercher des produits..." 
+           autocomplete="off"
+           aria-label="Rechercher des produits"
+           data-search-url="/api/ai/smartsearch/"
+           data-min-chars="2">
+    <button type="submit" class="search-button" aria-label="Rechercher">
+      <i class="fas fa-search"></i>
+    </button>
+  </form>
+  
+  <div id="search-suggestions" class="search-suggestions">
+    <!-- Les suggestions seront chargées ici dynamiquement -->
+  </div>
+</div>
+
+<!-- Script de la recherche intelligente -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('smart-search-input');
+  const searchForm = document.getElementById('smart-search-form');
+  const suggestionsContainer = document.getElementById('search-suggestions');
+  let searchTimeout;
+  let currentSearchTerm = '';
+  
+  // Afficher les recherches récentes au chargement
+  showRecentSearches();
+  
+  // Gérer la soumission du formulaire
+  searchForm.addEventListener('submit', function(e) {
+    const searchTerm = searchInput.value.trim();
+    if (!searchTerm) {
+      e.preventDefault();
+      return false;
+    }
+    // Sauvegarder la recherche dans l'historique
+    saveToSearchHistory(searchTerm);
+  });
+  
+  // Gérer la saisie de l'utilisateur
+  searchInput.addEventListener('input', function() {
+    const searchTerm = this.value.trim();
+    currentSearchTerm = searchTerm;
+    
+    // Masquer les suggestions si le champ est vide
+    if (!searchTerm) {
+      clearTimeout(searchTimeout);
+      showRecentSearches();
+      return;
+    }
+    
+    // Vérifier la longueur minimale
+    const minChars = parseInt(this.dataset.minChars) || 2;
+    if (searchTerm.length < minChars) {
+      return;
+    }
+    
+    // Délai avant de lancer la recherche (anti-rebond)
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      if (searchTerm === currentSearchTerm) {
+        fetchSearchSuggestions(searchTerm);
+      }
+    }, 300);
+  });
+  
+  // Gérer la navigation au clavier
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter') {
+      e.preventDefault();
+      
+      const items = suggestionsContainer.querySelectorAll('.suggestion-item');
+      const activeItem = suggestionsContainer.querySelector('.suggestion-item.active');
+      let index = Array.from(items).indexOf(activeItem);
+      
+      if (e.key === 'ArrowDown') {
+        index = (index + 1) % (items.length + 1);
+        if (index === items.length) index = 0;
+      } else if (e.key === 'ArrowUp') {
+        index = (index - 1 + items.length + 1) % (items.length + 1);
+        if (index === items.length - 1) index = -1;
+      } else if (e.key === 'Enter' && activeItem) {
+        activeItem.click();
+        return;
+      }
+      
+      items.forEach((item, i) => {
+        if (i === index) {
+          item.classList.add('active');
+          item.scrollIntoView({ block: 'nearest' });
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }
+  });
+  
+  // Fermer les suggestions en cliquant en dehors
+  document.addEventListener('click', function(e) {
+    if (!searchForm.contains(e.target)) {
+      suggestionsContainer.style.display = 'none';
+    }
+  });
+  
+  // Afficher les suggestions au focus
+  searchInput.addEventListener('focus', function() {
+    if (suggestionsContainer.children.length > 0) {
+      suggestionsContainer.style.display = 'block';
+    } else if (!this.value.trim()) {
+      showRecentSearches();
+    }
+  });
+  
+  // Fonction pour récupérer les suggestions de recherche
+  async function fetchSearchSuggestions(query) {
+    if (!query) return;
+    
+    const searchUrl = searchInput.dataset.searchUrl || '/api/ai/smartsearch/';
+    
+    try {
+      // Afficher l'état de chargement
+      showLoadingState();
+      
+      const response = await fetch(`${searchUrl}?q=${encodeURIComponent(query)}`);
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des suggestions');
+      }
+      
+      const data = await response.json();
+      displaySearchSuggestions(data.suggestions || [], query);
+    } catch (error) {
+      console.error('Erreur de recherche intelligente :', error);
+      showErrorState();
+    }
+  }
+  
+  // Afficher les suggestions de recherche
+  function displaySearchSuggestions(suggestions, query) {
+    if (!suggestions || suggestions.length === 0) {
+      showNoResults(query);
+      return;
+    }
+    
+    // Mettre en surbrillance les correspondances
+    const highlightText = (text) => {
+      if (!query) return text;
+      const regex = new RegExp(`(${query})`, 'gi');
+      return text.replace(regex, '<span class="suggestion-highlight">$1</span>');
+    };
+    
+    const html = `
+      ${suggestions.map(item => `
+        <div class="suggestion-item" data-url="${item.url || '#'}">
+          ${item.image ? `
+            <img src="${item.image}" alt="${item.name}" class="suggestion-image">
+          ` : `
+            <div class="suggestion-image bg-light d-flex align-items-center justify-content-center">
+              <i class="fas fa-box text-muted"></i>
+            </div>
+          `}
+          <div class="suggestion-details">
+            <div class="suggestion-title" title="${item.name}">
+              ${highlightText(item.name)}
+            </div>
+            <div class="suggestion-category">
+              ${item.category || 'Produit'}
+            </div>
+          </div>
+          ${item.price ? `
+            <div class="suggestion-price">
+              ${item.price.toFixed(2)} €
+            </div>
+          ` : ''}
+        </div>
+      `).join('')}
+      <div class="powered-by">
+        Recherche intelligente 
+        <span class="ai-badge-sm">
+          <i class="fas fa-robot"></i>
+          <span>IA</span>
+        </span>
+      </div>
+    `;
+    
+    suggestionsContainer.innerHTML = html;
+    suggestionsContainer.style.display = 'block';
+    
+    // Ajouter les gestionnaires d'événements pour les suggestions
+    const items = suggestionsContainer.querySelectorAll('.suggestion-item');
+    items.forEach(item => {
+      item.addEventListener('click', function() {
+        const url = this.dataset.url;
+        if (url) {
+          // Sauvegarder la recherche dans l'historique
+          const searchText = this.querySelector('.suggestion-title')?.textContent || '';
+          saveToSearchHistory(searchText);
+          
+          // Rediriger vers la page du produit
+          window.location.href = url;
+        }
+      });
+      
+      item.addEventListener('mouseenter', function() {
+        items.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  }
+  
+  // Afficher l'état de chargement
+  function showLoadingState() {
+    suggestionsContainer.innerHTML = `
+      <div class="search-loading">
+        <div class="spinner-border spinner-border-sm text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <div class="mt-2">Recherche en cours...</div>
+      </div>
+    `;
+    suggestionsContainer.style.display = 'block';
+  }
+  
+  // Afficher l'état d'erreur
+  function showErrorState() {
+    suggestionsContainer.innerHTML = `
+      <div class="no-suggestions">
+        <i class="fas fa-exclamation-triangle me-1"></i>
+        Impossible de charger les suggestions. Veuillez réessayer.
+      </div>
+    `;
+    suggestionsContainer.style.display = 'block';
+  }
+  
+  // Afficher "Aucun résultat"
+  function showNoResults(query) {
+    suggestionsContainer.innerHTML = `
+      <div class="no-suggestions">
+        Aucun résultat pour "${query}"
+      </div>
+      <div class="powered-by">
+        Recherche intelligente 
+        <span class="ai-badge-sm">
+          <i class="fas fa-robot"></i>
+          <span>IA</span>
+        </span>
+      </div>
+    `;
+    suggestionsContainer.style.display = 'block';
+  }
+  
+  // Afficher les recherches récentes
+  function showRecentSearches() {
+    const recentSearches = getRecentSearches();
+    
+    if (recentSearches.length === 0) {
+      suggestionsContainer.style.display = 'none';
+      return;
+    }
+    
+    const html = `
+      <div class="recent-searches">
+        <div class="recent-searches-header">
+          <span>Recherches récentes</span>
+          <button type="button" class="clear-recent" id="clear-recent-searches">
+            <i class="fas fa-trash-alt me-1"></i>Effacer
+          </button>
+        </div>
+        ${recentSearches.map(term => `
+          <div class="recent-search-item" data-term="${term.replace(/"/g, '&quot;')}">
+            <i class="far fa-clock recent-search-icon"></i>
+            <span class="search-term">${term}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="powered-by">
+        Recherche intelligente 
+        <span class="ai-badge-sm">
+          <i class="fas fa-robot"></i>
+          <span>IA</span>
+        </span>
+      </div>
+    `;
+    
+    suggestionsContainer.innerHTML = html;
+    suggestionsContainer.style.display = 'block';
+    
+    // Gérer le clic sur une recherche récente
+    document.querySelectorAll('.recent-search-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const term = this.dataset.term;
+        searchInput.value = term;
+        searchInput.focus();
+        fetchSearchSuggestions(term);
+      });
+    });
+    
+    // Gérer le bouton d'effacement de l'historique
+    const clearButton = document.getElementById('clear-recent-searches');
+    if (clearButton) {
+      clearButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        clearSearchHistory();
+        showRecentSearches();
+      });
+    }
+  }
+  
+  // Obtenir les recherches récentes depuis le stockage local
+  function getRecentSearches() {
+    try {
+      const searches = localStorage.getItem('recentSearches');
+      return searches ? JSON.parse(searches) : [];
+    } catch (e) {
+      console.error('Erreur lors de la lecture des recherches récentes :', e);
+      return [];
+    }
+  }
+  
+  // Sauvegarder une recherche dans l'historique
+  function saveToSearchHistory(term) {
+    if (!term) return;
+    
+    try {
+      let searches = getRecentSearches();
+      
+      // Supprimer les doublons
+      searches = searches.filter(item => item.toLowerCase() !== term.toLowerCase());
+      
+      // Ajouter au début du tableau
+      searches.unshift(term);
+      
+      // Limiter à 5 recherches
+      if (searches.length > 5) {
+        searches = searches.slice(0, 5);
+      }
+      
+      // Sauvegarder dans le stockage local
+      localStorage.setItem('recentSearches', JSON.stringify(searches));
+    } catch (e) {
+      console.error('Erreur lors de la sauvegarde de la recherche :', e);
+    }
+  }
+  
+  // Effacer l'historique des recherches
+  function clearSearchHistory() {
+    try {
+      localStorage.removeItem('recentSearches');
+    } catch (e) {
+      console.error('Erreur lors de l\'effacement de l\'historique :', e);
+    }
+  }
+});
+</script>

@@ -22,9 +22,21 @@ def vue_panier(request):
 @login_required
 @require_POST
 def ajouter_au_panier(request, produit_id):
-    """Ajoute un produit au panier."""
+    """Ajoute un produit au panier avec vérification du stock."""
     produit = get_object_or_404(Produit, id=produit_id, est_actif=True)
     quantite = int(request.POST.get('quantite', 1))
+    
+    # Vérifier si la quantité demandée est disponible en stock
+    if quantite <= 0:
+        messages.error(request, "La quantité doit être supérieure à zéro.")
+        return redirect(request.META.get('HTTP_REFERER', 'catalog:accueil'))
+        
+    if quantite > produit.quantite:
+        messages.error(
+            request, 
+            f"Stock insuffisant. Il ne reste que {produit.quantite} exemplaire(s) de ce produit."
+        )
+        return redirect(request.META.get('HTTP_REFERER', 'catalog:accueil'))
     
     # Vérifie si le produit est déjà dans le panier
     panier, created = Panier.objects.get_or_create(utilisateur=request.user)
@@ -35,9 +47,23 @@ def ajouter_au_panier(request, produit_id):
     )
     
     if not created:
-        # Si l'article existe déjà, on met à jour la quantité
-        article.quantite += quantite
+        # Vérifier que la nouvelle quantité totale ne dépasse pas le stock
+        nouvelle_quantite = article.quantite + quantite
+        if nouvelle_quantite > produit.quantite:
+            messages.error(
+                request,
+                f"Quantité non disponible. Vous avez déjà {article.quantite} article(s) dans votre panier "
+                f"et il ne reste que {produit.quantite} exemplaire(s) en stock."
+            )
+            return redirect('cart:panier')
+            
+        article.quantite = nouvelle_quantite
         article.save()
+    
+    # Mettre à jour le statut en_stock si nécessaire
+    if produit.quantite <= 0:
+        produit.en_stock = False
+        produit.save(update_fields=['en_stock'])
     
     # Préparer la réponse
     response_data = {

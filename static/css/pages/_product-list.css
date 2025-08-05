@@ -1,0 +1,403 @@
+/* ==========================================================================
+   PAGE : LISTE DES PRODUITS - Partie 1
+   Styles spécifiques à la page de liste des produits et de filtrage
+   ========================================================================== */
+
+/* Conteneur principal */
+.product-listing {
+  padding: 2rem 0;
+  background-color: #f8f9fa;
+}
+
+[data-bs-theme="dark"] .product-listing {
+  background-color: #1a202c;
+}
+
+/* En-tête de la page */
+.listing-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.listing-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.listing-description {
+  color: var(--color-text-light);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Conteneur de la liste de produits */
+.listing-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2rem;
+}
+
+/* Barre latérale de filtrage */
+.listing-sidebar {
+  position: sticky;
+  top: 1.5rem;
+  height: fit-content;
+}
+
+/* En-tête de la barre latérale */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+[data-bs-theme="dark"] .sidebar-header {
+  border-bottom-color: #4a5568;
+}
+
+.sidebar-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.clear-filters {
+  font-size: 0.875rem;
+  color: var(--color-primary);
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.clear-filters:hover {
+  color: #0b5ed7;
+  text-decoration: underline;
+}
+
+/* Widget de filtre */
+.filter-widget {
+  margin-bottom: 1.75rem;
+  background: #fff;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+}
+
+[data-bs-theme="dark"] .filter-widget {
+  background-color: #2d3748;
+  border: 1px solid #4a5568;
+}
+
+.filter-widget:last-child {
+  margin-bottom: 0;
+}
+
+.filter-widget-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.filter-widget-title::after {
+  content: '\f107';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  font-size: 0.875rem;
+  transition: transform 0.2s ease;
+}
+
+.filter-widget.collapsed .filter-widget-title::after {
+  transform: rotate(-180deg);
+}
+
+.filter-widget-content {
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+/* Styles spécifiques pour différents types de filtres */
+.filter-category .filter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.filter-category .filter-item {
+  margin-bottom: 0.5rem;
+}
+
+.filter-category .filter-link {
+  display: flex;
+  align-items: center;
+  color: var(--color-text);
+  text-decoration: none;
+  padding: 0.5rem 0;
+  transition: color 0.2s ease, padding-left 0.2s ease;
+  border-radius: var(--border-radius-sm);
+}
+
+.filter-category .filter-link:hover {
+  color: var(--color-primary);
+  padding-left: 0.5rem;
+}
+
+.filter-category .filter-count {
+  margin-left: auto;
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+  background-color: var(--color-bg-light);
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+}
+
+[data-bs-theme="dark"] .filter-category .filter-count {
+  background-color: #4a5568;
+}
+
+/* Filtre par prix */
+.price-filter .price-slider {
+  margin: 1.5rem 0;
+  height: 4px;
+  background-color: #e9ecef;
+  border-radius: 2px;
+  position: relative;
+}
+
+[data-bs-theme="dark"] .price-filter .price-slider {
+  background-color: #4a5568;
+}
+
+.price-filter .price-slider .ui-slider-range {
+  position: absolute;
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: 2px;
+}
+
+.price-filter .ui-slider-handle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 2px solid var(--color-primary);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  outline: none;
+  z-index: 2;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.price-filter .ui-slider-handle:hover,
+.price-filter .ui-slider-handle:focus {
+  transform: translateY(-50%) scale(1.2);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.price-inputs {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.price-input-group {
+  position: relative;
+  width: 48%;
+}
+
+.price-input-group label {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.25rem;
+}
+
+.price-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  background-color: var(--color-bg-light);
+}
+
+[data-bs-theme="dark"] .price-input {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+/* Filtre par marque */
+.brand-filter .filter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* Faire défiler la barre de défilement uniquement au survol */
+.brand-filter .filter-list {
+  scrollbar-width: thin;
+  scrollbar-color: #adb5bd transparent;
+}
+
+.brand-filter .filter-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.brand-filter .filter-list::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.brand-filter .filter-list::-webkit-scrollbar-thumb {
+  background-color: #adb5bd;
+  border-radius: 3px;
+}
+
+[data-bs-theme="dark"] .brand-filter .filter-list::-webkit-scrollbar-thumb {
+  background-color: #718096;
+}
+
+.brand-filter .filter-item {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.brand-filter .custom-checkbox {
+  position: relative;
+  padding-left: 1.75rem;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 1.5rem;
+}
+
+.brand-filter .custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1.25rem;
+  width: 1.25rem;
+  background-color: var(--color-bg-light);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+[data-bs-theme="dark"] .checkmark {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+.brand-filter .custom-checkbox:hover input ~ .checkmark {
+  border-color: var(--color-primary);
+}
+
+.brand-filter .custom-checkbox input:checked ~ .checkmark {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.checkmark::after {
+  content: '';
+  position: absolute;
+  display: none;
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.brand-filter .custom-checkbox input:checked ~ .checkmark::after {
+  display: block;
+}
+
+.brand-filter .filter-label {
+  margin-left: 0.5rem;
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  transition: color 0.2s ease;
+}
+
+.brand-filter .filter-count {
+  margin-left: auto;
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+}
+
+/* Filtre par évaluation */
+.rating-filter .filter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rating-filter .filter-item {
+  margin-bottom: 0.75rem;
+}
+
+.rating-filter .filter-link {
+  display: flex;
+  align-items: center;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.rating-filter .filter-link:hover {
+  color: var(--color-primary);
+}
+
+.rating-stars {
+  display: flex;
+  margin-right: 0.75rem;
+  color: #ffc107;
+}
+
+.rating-stars .empty {
+  color: #e9ecef;
+}
+
+[data-bs-theme="dark"] .rating-stars .empty {
+  color: #4a5568;
+}
+
+.rating-filter .filter-count {
+  margin-left: auto;
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+}

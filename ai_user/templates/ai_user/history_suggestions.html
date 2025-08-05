@@ -1,0 +1,44 @@
+{# Template pour les suggestions basées sur l'historique #}
+{% load static %}
+
+<div class="container my-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Suggestions personnalisées</h5>
+        </div>
+        <div class="card-body">
+            <div class="row" id="ai-suggestions-container">
+                {# Contenu chargé dynamiquement via AJAX #}
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement des suggestions...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Script pour charger les suggestions via AJAX #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Ne charger les suggestions que si l'utilisateur est connecté
+    const container = document.getElementById('ai-suggestions-container');
+    if (container) {
+        fetch('/api/ai/suggestions/')
+            .then(response => response.text())
+            .then(html => {
+                container.innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement des suggestions:', error);
+                container.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-warning">
+                            Impossible de charger les suggestions personnalisées. Veuillez réessayer plus tard.
+                        </div>
+                    </div>`;
+            });
+    }
+});
+</script>

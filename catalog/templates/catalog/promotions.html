@@ -28,19 +28,19 @@
                         {% endif %}
                         
                         <div class="position-absolute top-0 end-0 m-2">
-                            <span class="badge bg-danger">-{{ produit.pourcentage_promotion }}%</span>
+                            <span class="badge bg-danger">-{{ produit.get_pourcentage_promotion }}%</span>
                         </div>
                         
                         <div class="card-body">
                             <h5 class="card-title">{{ produit.nom }}</h5>
-                            <p class="card-text text-muted">{{ produit.courte_description|truncatewords:15 }}</p>
+                            <p class="card-text text-muted">{{ produit.get_courte_description|truncatewords:15 }}</p>
                             
                             <div class="d-flex flex-column">
                                 <div class="d-flex align-items-center mb-2">
-                                    <span class="h5 mb-0 text-danger me-2">{{ produit.prix_promotion }} €</span>
+                                    <span class="h5 mb-0 text-danger me-2">{{ produit.prix_promotionnel }} €</span>
                                     <small class="text-muted text-decoration-line-through">{{ produit.prix }} €</small>
                                     <small class="ms-2 text-success">
-                                        Économisez {{ produit.economie }} €
+                                        Économisez {{ produit.get_economie|floatformat:2 }} €
                                     </small>
                                 </div>
                                 <a href="{% url 'catalog:detail_produit' slug=produit.slug %}" class="btn btn-danger mt-auto">

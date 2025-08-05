@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="fr">
+<html lang="fr" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Boutique en ligne - Achetez les meilleurs produits en ligne">
     <title>{% block title %}Mon E-commerce{% endblock %}</title>
+    
+    <!-- Polices Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/catalog.css' %}">
-    {% block extra_css %}{% endblock %}
+    
+    <!-- Notre CSS personnalisé -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    
+    <!-- Bloc pour les feuilles de style supplémentaires -->
+    {% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/suggestions.css' %}">
+    {% endblock %}
 </head>
 <body>
     <!-- En-tête -->
@@ -20,14 +36,8 @@
                     <h1 class="h4 mb-0">Mon E-commerce</h1>
                 </a>
                 <div class="d-flex align-items-center">
-                    <form class="me-3" action="{% url 'catalog:recherche' %}" method="get">
-                        <div class="input-group">
-                            <input type="text" name="q" class="form-control form-control-sm" placeholder="Rechercher...">
-                            <button class="btn btn-outline-light btn-sm" type="submit">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </form>
+                    <!-- Barre de recherche intelligente -->
+                    {% include 'ai_user/smart_search.html' %}
                     <a href="{% url 'cart:panier' %}" class="text-white me-3 position-relative">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge" style="display: none;">
@@ -85,17 +95,19 @@
     </nav>
 
     <!-- Contenu principal -->
-    <main class="container my-4">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-        
-        {% block content %}{% endblock %}
+    <main class="flex-shrink-0">
+        <div class="container py-4">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% block content %}{% endblock %}
+        </div>
     </main>
 
     <!-- Pied de page -->
@@ -104,7 +116,7 @@
             <div class="row">
                 <div class="col-md-4 mb-4 mb-md-0">
                     <h5>À propos</h5>
-                    <p>Votre boutique en ligne préférée pour des produits de qualité à des prix imbattables.</p>
+                    <p>Votre boutique en ligne Silence d'or chez mermose pour des produits de qualité à des prix imbattables.</p>
                 </div>
                 <div class="col-md-4 mb-4 mb-md-0">
                     <h5>Liens rapides</h5>
@@ -137,5 +149,347 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/main.js' %}"></script>
     {% block extra_js %}{% endblock %}
+
+    <!-- Chargement du CSS du widget de chat -->
+    <link rel="stylesheet" href="{% static 'css/components/_chatbot-widget.css' %}">
+    
+    <!-- Styles en ligne pour le widget de chat -->
+    <style>
+        /* Styles de base pour les messages */
+        .chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+            display: flex !important;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            line-height: 1.4;
+            font-size: 14px;
+            position: relative;
+            margin: 5px 0;
+            word-wrap: break-word;
+            opacity: 1 !important;
+            display: block !important;
+            visibility: visible !important;
+        }
+        
+        .message-user {
+            align-self: flex-end;
+            background: #007bff;
+            color: white;
+            border-radius: 18px 18px 4px 18px;
+            margin-left: auto;
+        }
+        
+        .message-bot {
+            align-self: flex-start;
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-radius: 18px 18px 18px 4px;
+            margin-right: auto;
+        }
+    </style>
+
+<!-- Chatbot IA Widget -->
+<div class="chatbot-widget">
+  <button id="chatbot-toggle" class="chatbot-toggle" aria-label="Ouvrir le chat">
+    <i class="fas fa-comment-dots"></i>
+  </button>
+  
+  <div id="chatbot-box" class="chatbot-box">
+    <div class="chatbot-header">
+      <span>Assistant IA</span>
+      <button class="chatbot-close" id="chatbot-close" aria-label="Fermer le chat">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div id="chatbot-messages" class="chatbot-messages">
+      <div class="message message-bot">
+        Bonjour ! Comment puis-je vous aider aujourd'hui ?
+      </div>
+    </div>
+    
+    <form id="chatbot-form" class="chatbot-form">
+      <input 
+        id="chatbot-input" 
+        type="text" 
+        class="chatbot-input" 
+        placeholder="Écrivez votre message..." 
+        autocomplete="off" 
+        aria-label="Votre message"
+      />
+      <button type="submit" class="chatbot-submit" id="chatbot-submit">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Éléments du DOM
+  const widget = document.querySelector('.chatbot-widget');
+  const box = document.getElementById('chatbot-box');
+  const toggle = document.getElementById('chatbot-toggle');
+  const closeBtn = document.getElementById('chatbot-close');
+  const form = document.getElementById('chatbot-form');
+  const input = document.getElementById('chatbot-input');
+  const submitBtn = document.getElementById('chatbot-submit');
+  const messages = document.getElementById('chatbot-messages');
+  let isProcessing = false;
+
+  // Afficher/masquer le chat
+  function toggleChat() {
+    box.classList.toggle('visible');
+    if (box.classList.contains('visible')) {
+      input.focus();
+    }
+  }
+
+  // Ajouter un message au chat
+  function addMessage(text, type = 'bot') {
+    console.log('Ajout d\'un message:', {text, type});
+    const messageDiv = document.createElement('div');
+    
+    // Créer un ID unique pour le message
+    const messageId = 'msg-' + Date.now();
+    messageDiv.id = messageId;
+    
+    // Ajouter les classes CSS appropriées
+    messageDiv.className = `message message-${type}`;
+    
+    // Ajouter le contenu du message en toute sécurité
+    if (typeof text === 'string') {
+      messageDiv.textContent = text;
+    } else {
+      console.warn('Le texte du message n\'est pas une chaîne:', text);
+      messageDiv.textContent = String(text);
+    }
+    
+    // Ajouter le message au conteneur
+    messages.appendChild(messageDiv);
+    
+    // Faire défiler vers le bas
+    messages.scrollTop = messages.scrollHeight;
+    
+    // Vérifier que le message a bien été ajouté
+    setTimeout(() => {
+      const addedMessage = document.getElementById(messageId);
+      if (!addedMessage) {
+        console.error('Le message a disparu du DOM!', {messageId, text, type});
+        // Réessayer d'ajouter le message
+        if (messages && messages.parentNode) {
+          messages.appendChild(messageDiv);
+          console.log('Message réajouté au DOM');
+        }
+      }
+    }, 100);
+    
+    return messageDiv;
+  }
+
+  // Gérer la soumission du formulaire
+  async function handleSubmit(e) {
+    console.log('handleSubmit appelé');
+    
+    // Empêcher le comportement par défaut du formulaire
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    }
+    
+    const question = input.value.trim();
+    if (!question || isProcessing) {
+      console.log('Question vide ou traitement en cours');
+      return false;
+    }
+    
+    console.log('Question reçue:', question);
+    
+    // Enregistrer l'état actuel du défilement
+    const scrollPosition = messages.scrollTop;
+    const scrollHeight = messages.scrollHeight;
+    
+    try {
+      // Afficher le message de l'utilisateur
+      const userMessage = addMessage(question, 'user');
+      input.value = '';
+      
+      // Forcer un rendu synchrone
+      await new Promise(resolve => setTimeout(resolve, 0));
+      
+      // Afficher l'indicateur de chargement
+      const thinkingDiv = document.createElement('div');
+      thinkingDiv.id = 'thinking-indicator';
+      thinkingDiv.className = 'message message-thinking';
+      thinkingDiv.textContent = 'Réflexion en cours...';
+      messages.appendChild(thinkingDiv);
+      messages.scrollTop = messages.scrollHeight;
+      
+      isProcessing = true;
+      submitBtn.disabled = true;
+      
+      console.log('Envoi de la requête au serveur...');
+      
+      // Appel à l'API du chatbot avec timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      
+      try {
+        const response = await fetch('/api/ai/chatbot/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') || ''
+          },
+          body: JSON.stringify({ question }),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        console.log('Réponse reçue:', response.status);
+        
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Données reçues:', data);
+        
+        // Supprimer l'indicateur de chargement
+        const indicator = document.getElementById('thinking-indicator');
+        if (indicator && indicator.parentNode === messages) {
+          messages.removeChild(indicator);
+        }
+        
+        // Afficher la réponse du bot
+        if (data.answer) {
+          // Utiliser setTimeout pour forcer un nouveau cycle d'événements
+          setTimeout(() => {
+            addMessage(data.answer, 'bot');
+          }, 50);
+        } else {
+          setTimeout(() => {
+            addMessage('Désolé, je n\'ai pas pu traiter votre demande.', 'bot');
+          }, 50);
+        }
+        
+      } catch (error) {
+        clearTimeout(timeoutId);
+        console.error('Erreur lors de la requête au chatbot:', error);
+        
+        // Supprimer l'indicateur de chargement s'il existe encore
+        const indicator = document.getElementById('thinking-indicator');
+        if (indicator && indicator.parentNode === messages) {
+          messages.removeChild(indicator);
+        }
+        
+        // Afficher un message d'erreur
+        setTimeout(() => {
+          addMessage('Désolé, une erreur est survenue. Veuillez réessayer plus tard.', 'error');
+        }, 50);
+      }
+      
+    } catch (error) {
+      console.error('Erreur inattendue dans handleSubmit:', error);
+      // Afficher un message d'erreur générique
+      setTimeout(() => {
+        addMessage('Une erreur inattendue est survenue. Veuillez recharger la page.', 'error');
+      }, 50);
+    } finally {
+      isProcessing = false;
+      submitBtn.disabled = false;
+      input.focus();
+    }
+    
+    return false;
+  }
+  
+  // Fonction utilitaire pour récupérer les cookies
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  
+  // Fonction pour empêcher la propagation des événements
+  function stopPropagation(e) {
+    if (e) {
+      e.stopPropagation();
+      // Ne pas appeler preventDefault() ici pour ne pas bloquer le comportement par défaut des éléments
+    }
+  }
+
+  // Gestionnaires d'événements
+  toggle.addEventListener('click', function(e) {
+    if (e) e.stopPropagation();
+    toggleChat();
+  });
+  
+  closeBtn.addEventListener('click', function(e) {
+    if (e) e.stopPropagation();
+    box.classList.remove('visible');
+  });
+  
+  // Gestion de la soumission du formulaire
+  form.addEventListener('submit', function(e) {
+    console.log('Événement submit du formulaire déclenché');
+    return handleSubmit(e);
+  }, {capture: true, passive: false});
+  
+  // Ajouter un gestionnaire d'événement pour la touche Entrée
+  input.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  });
+  
+  // Gestion du clic en dehors du widget
+  document.addEventListener('click', function(e) {
+    if (box.classList.contains('visible') && !box.contains(e.target) && e.target !== toggle) {
+      box.classList.remove('visible');
+    }
+  });
+  
+  // Empêcher la propagation des événements dans la boîte de chat
+  box.addEventListener('click', function(e) {
+    if (e) e.stopPropagation();
+  });
+  
+  // Touche Entrée pour envoyer le message
+  input.addEventListener('keydown', function(e) {
+    if (e && e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  });
+  
+  // Désactiver la fermeture lors de la saisie
+  input.addEventListener('mousedown', function(e) {
+    if (e) e.stopPropagation();
+  });
+});
+</script>
 </body>
 </html>

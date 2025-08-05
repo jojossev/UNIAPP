@@ -77,8 +77,8 @@ class CommandeAdmin(admin.ModelAdmin):
     
     def utilisateur_display(self, obj):
         """Affiche un lien vers l'utilisateur avec son nom complet."""
-        url = reverse('admin:accounts_customuser_change', args=[obj.utilisateur.id])
-        return format_html('<a href="{}">{} {}</a>', url, obj.utilisateur.first_name, obj.utilisateur.last_name)
+        url = reverse('admin:accounts_user_change', args=[obj.utilisateur.id])
+        return format_html('<a href="{}">{} {}</a>', url, obj.utilisateur.first_name, obj.utilisateur.last_name or obj.utilisateur.username)
     utilisateur_display.short_description = 'Client'
     utilisateur_display.admin_order_field = 'utilisateur__last_name'
     

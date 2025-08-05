@@ -1,0 +1,193 @@
+<!-- templates/ai_user/review_summary.html -->
+{% load static %}
+
+<!-- Styles pour le composant de résumé d'avis -->
+<style>
+  .review-summary {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border: 1px solid #eee;
+  }
+  .review-summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #eee;
+  }
+  .review-summary-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .review-summary-content {
+    background: white;
+    border-radius: 8px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    position: relative;
+    min-height: 120px;
+  }
+  .review-summary-text {
+    margin: 0;
+    line-height: 1.6;
+    color: #34495e;
+  }
+  .review-summary-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: #7f8c8d;
+  }
+  .review-summary-error {
+    color: #e74c3c;
+    padding: 1rem;
+    text-align: center;
+  }
+  .review-summary-meta {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+  }
+  .ai-badge {
+    background: #e8f4fd;
+    color: #2980b9;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .refresh-btn {
+    background: none;
+    border: none;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+  .refresh-btn:hover {
+    background: rgba(52, 152, 219, 0.1);
+  }
+  .refresh-btn .spinner-border {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+  }
+  .refresh-btn.loading .spinner-border {
+    display: inline-block;
+  }
+  .refresh-btn.loading .refresh-text {
+    display: none;
+  }
+</style>
+
+<!-- Composant de résumé d'avis -->
+<div class="review-summary" id="review-summary-container">
+  <div class="review-summary-header">
+    <h3 class="review-summary-title">
+      <i class="fas fa-robot text-primary"></i>
+      Avis clients - Résumé IA
+    </h3>
+    <button class="refresh-btn" id="refresh-summary">
+      <span class="spinner-border spinner-border-sm"></span>
+      <span class="refresh-text">Actualiser</span>
+    </button>
+  </div>
+  
+  <div class="review-summary-content">
+    <div class="review-summary-loading" id="loading-state">
+      <div class="spinner-border text-primary mb-2" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="mb-0">Analyse des avis en cours...</p>
+    </div>
+    
+    <div class="review-summary-error d-none" id="error-state">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      <span>Impossible de charger le résumé des avis. Veuillez réessayer plus tard.</span>
+    </div>
+    
+    <div id="summary-content" class="d-none">
+      <p class="review-summary-text" id="summary-text"></p>
+      <div class="review-summary-meta">
+        <span class="ai-badge">
+          <i class="fas fa-robot"></i>
+          <span>Généré par IA</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Script de chargement du résumé -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const container = document.getElementById('review-summary-container');
+  const loadingState = document.getElementById('loading-state');
+  const errorState = document.getElementById('error-state');
+  const summaryContent = document.getElementById('summary-content');
+  const summaryText = document.getElementById('summary-text');
+  const refreshBtn = document.getElementById('refresh-summary');
+  
+  // Fonction pour charger le résumé
+  async function loadSummary() {
+    try {
+      // Afficher l'état de chargement
+      loadingState.classList.remove('d-none');
+      errorState.classList.add('d-none');
+      summaryContent.classList.add('d-none');
+      refreshBtn.classList.add('loading');
+      
+      // Récupérer l'ID du produit depuis l'URL ou un attribut data
+      const productId = '{{ produit.id }}';
+      
+      // Appeler l'API de résumé d'avis
+      const response = await fetch(`/api/ai/review_summary/?product_id=${productId}`);
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors du chargement du résumé');
+      }
+      
+      const data = await response.json();
+      
+      // Afficher le contenu
+      summaryText.textContent = data.summary || 'Aucun résumé disponible pour le moment.';
+      loadingState.classList.add('d-none');
+      summaryContent.classList.remove('d-none');
+      
+    } catch (error) {
+      console.error('Erreur lors du chargement du résumé :', error);
+      loadingState.classList.add('d-none');
+      errorState.classList.remove('d-none');
+    } finally {
+      refreshBtn.classList.remove('loading');
+    }
+  }
+  
+  // Charger le résumé au chargement de la page
+  loadSummary();
+  
+  // Gérer le clic sur le bouton d'actualisation
+  refreshBtn.addEventListener('click', loadSummary);
+});
+</script>

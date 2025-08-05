@@ -1,0 +1,103 @@
+/* Styles pour le conteneur des suggestions */
+.suggestions-container {
+    margin: 2rem 0;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.suggestions-title {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Style pour la liste des suggestions */
+.suggestions-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 0 1rem;
+}
+
+/* Style pour chaque élément de suggestion */
+.suggestion-item {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.suggestion-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Style pour le lien de la suggestion */
+.suggestion-link {
+    text-decoration: none;
+    color: #333;
+    display: block;
+    height: 100%;
+}
+
+/* Style pour l'image de la suggestion */
+.suggestion-image {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+}
+
+.suggestion-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.suggestion-item:hover .suggestion-image img {
+    transform: scale(1.05);
+}
+
+/* Style pour les détails de la suggestion */
+.suggestion-details {
+    padding: 1rem;
+}
+
+.suggestion-name {
+    font-size: 1rem;
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.suggestion-price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #2e7d32; /* Vert foncé pour le prix */
+    margin: 0;
+}
+
+/* Style pour le message quand il n'y a pas de suggestions */
+.no-suggestions {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .suggestions-list {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+    
+    .suggestion-image {
+        height: 120px;
+    }
+}

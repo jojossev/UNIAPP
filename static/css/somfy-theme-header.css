@@ -1,0 +1,270 @@
+/* ==========================================================================
+   THEME SOMFY - En-tête
+   ========================================================================== */
+
+/* Header principal */
+.header {
+    background-color: var(--background);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    z-index: 1000;
+}
+
+/* Barre supérieure (Particuliers / Professionnels) */
+.header-top {
+    background-color: var(--primary-color);
+    color: #fff;
+    font-size: 0.875rem;
+    padding: 0.5rem 0;
+}
+
+.header-top .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.switch-account {
+    display: flex;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 0.25rem;
+}
+
+.switch-account a {
+    color: #fff;
+    padding: 0.25rem 1rem;
+    border-radius: 1rem;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.switch-account a.active {
+    background-color: #fff;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Conteneur principal du header */
+.header-main {
+    padding: 1rem 0;
+    background-color: #fff;
+}
+
+.header-main .container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    margin-right: 2rem;
+}
+
+.logo img {
+    max-height: 50px;
+    width: auto;
+}
+
+/* Navigation principale */
+.main-nav {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.nav-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-item {
+    margin: 0 0.5rem;
+}
+
+.nav-link {
+    color: var(--text-color);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-md);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    display: block;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+    background-color: var(--background-light);
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+/* Barre de recherche */
+.search-bar {
+    position: relative;
+    max-width: 500px;
+    margin: 0 1rem;
+    flex: 1;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-right: 3rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    transition: all var(--transition-normal);
+}
+
+.search-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.25);
+    outline: 0;
+}
+
+.search-btn {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Icônes du header */
+.header-actions {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.action-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    padding: 0.5rem;
+    margin: 0 0.25rem;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    position: relative;
+    min-width: 60px;
+}
+
+.action-icon:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.action-icon i {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.action-icon span {
+    font-size: 0.75rem;
+    display: block;
+    text-align: center;
+}
+
+.badge {
+    position: absolute;
+    top: 0;
+    right: 0.5rem;
+    background-color: var(--secondary-color);
+    color: #fff;
+    border-radius: 50%;
+    width: 1.25rem;
+    height: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+    font-weight: 600;
+}
+
+/* Menu mobile */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-left: 1rem;
+}
+
+/* Styles responsifs */
+@media (max-width: 1199.98px) {
+    .search-bar {
+        max-width: 350px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .header-main .container {
+        flex-wrap: nowrap;
+    }
+    
+    .logo {
+        margin-right: 1rem;
+    }
+    
+    .search-bar {
+        order: 1;
+        max-width: 100%;
+        margin: 1rem 0;
+    }
+    
+    .main-nav {
+        order: 3;
+        width: 100%;
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .nav-list {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .nav-item {
+        margin: 0.25rem 0;
+        width: 100%;
+    }
+    
+    .nav-link {
+        padding: 0.75rem 1rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .header-actions {
+        display: none;
+    }
+    
+    .header-top {
+        font-size: 0.75rem;
+    }
+    
+    .switch-account a {
+        padding: 0.25rem 0.5rem;
+    }
+}

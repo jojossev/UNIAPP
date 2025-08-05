@@ -1,0 +1,207 @@
+<!-- templates/ai_user/recommendations.html -->
+{% load static %}
+
+<!-- Styles pour le composant de recommandations -->
+<style>
+  .ai-recommendations {
+    margin: 2.5rem 0;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .ai-recommendations h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .ai-recommendations h3 i {
+    color: #3498db;
+  }
+  .recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+  .recommendation-card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .recommendation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  }
+  .recommendation-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-bottom: 1px solid #eee;
+  }
+  .recommendation-card .card-body {
+    padding: 1rem;
+  }
+  .recommendation-card .card-title {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #2c3e50;
+    height: 2.5rem;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .recommendation-card .card-price {
+    color: #e74c3c;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+  }
+  .recommendation-card .btn-view {
+    width: 100%;
+    background: #3498db;
+    border: none;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .recommendation-card .btn-view:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+  }
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .error-message {
+    color: #e74c3c;
+    text-align: center;
+    padding: 1.5rem;
+    background: #fde8e8;
+    border-radius: 8px;
+    margin: 1rem 0;
+  }
+  .no-recommendations {
+    text-align: center;
+    color: #7f8c8d;
+    padding: 2rem;
+    font-style: italic;
+  }
+  @media (max-width: 768px) {
+    .recommendations-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    .ai-recommendations {
+      padding: 1rem;
+      margin: 1.5rem 0;
+    }
+  }
+</style>
+
+<!-- Bloc de recommandations -->
+<div class="ai-recommendations">
+  <h3>
+    <i class="fas fa-robot"></i>
+    Recommandations personnalisées pour vous
+  </h3>
+  
+  <div id="recommendations-container">
+    <!-- État de chargement -->
+    <div class="loading-spinner">
+      <div class="spinner-border text-primary" style="width: 2.5rem; height: 2.5rem;" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="text-muted mt-2">Nous préparons vos recommandations personnalisées...</p>
+    </div>
+  </div>
+  
+  <div class="text-end mt-3">
+    <small class="text-muted">Ces suggestions sont générées par notre IA en fonction de vos préférences.</small>
+  </div>
+</div>
+
+<!-- Script de chargement des recommandations -->
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+  const container = document.getElementById('recommendations-container');
+  
+  // Fonction pour formater le prix
+  const formatPrice = (price) => {
+    if (!price) return 'Prix sur demande';
+    return new Intl.NumberFormat('fr-FR', { 
+      style: 'currency', 
+      currency: 'EUR',
+      minimumFractionDigits: 2
+    }).format(price);
+  };
+
+  try {
+    // Récupère l'ID utilisateur si connecté (optionnel)
+    const userId = "{{ request.user.id|default:'' }}";
+    
+    // Appel à l'API de recommandations
+    const response = await fetch(`/api/ai/reco/${userId ? `?user_id=${userId}` : ''}`);
+    const data = await response.json();
+    
+    // Affiche les recommandations
+    if (data.recommendations && data.recommendations.length > 0) {
+      container.innerHTML = `
+        <div class="recommendations-grid">
+          ${data.recommendations.slice(0, 6).map(prod => `
+            <div class="recommendation-card">
+              <img src="${prod.image || 'https://via.placeholder.com/300x200?text=Produit'}" 
+                   alt="${prod.nom || 'Produit recommandé'}"
+                   onerror="this.src='https://via.placeholder.com/300x200?text=Image+non+disponible'">
+              <div class="card-body">
+                <h5 class="card-title">${prod.nom || 'Produit'}</h5>
+                <div class="card-price">${formatPrice(prod.prix)}</div>
+                <a href="${prod.url || '#'}" class="btn btn-primary btn-view">
+                  <i class="fas fa-shopping-cart me-1"></i> Voir
+                </a>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div class="no-recommendations">
+          <i class="fas fa-info-circle fa-2x mb-2" style="color: #bdc3c7;"></i>
+          <p class="mb-0">Aucune recommandation disponible pour le moment.</p>
+          <button onclick="window.location.reload()" class="btn btn-sm btn-outline-secondary mt-3">
+            <i class="fas fa-sync-alt me-1"></i> Rafraîchir
+          </button>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement des recommandations :', error);
+    container.innerHTML = `
+      <div class="error-message">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <strong>Oups !</strong> Nous rencontrons un problème pour charger vos recommandations.
+        <div class="mt-2">
+          <button onclick="window.location.reload()" class="btn btn-sm btn-outline-danger">
+            <i class="fas fa-sync-alt me-1"></i> Réessayer
+          </button>
+        </div>
+      </div>
+    `;
+  }
+});
+</script>

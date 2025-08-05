@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from .models import Categorie, Produit, ImageProduit, AvisProduit, CaracteristiqueProduit
+from .models import Categorie, Produit, ImageProduit, AvisProduit, CaracteristiqueProduit, ImageCategorie
 
 
 class ImageProduitInline(admin.TabularInline):
@@ -34,19 +34,37 @@ class AvisProduitInline(admin.TabularInline):
         return False
 
 
+class ImageCategorieInline(admin.TabularInline):
+    model = ImageCategorie
+    extra = 1
+    fields = ('image', 'apercu_image', 'legende', 'est_principale', 'ordre')
+    readonly_fields = ('apercu_image',)
+    
+    def apercu_image(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="max-height: 100px; max-width: 100px; object-fit: contain;" />', obj.image.url)
+        return "Aucune image"
+    apercu_image.short_description = 'Aperçu'
+
+
 @admin.register(Categorie)
 class CategorieAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'est_active', 'nb_produits', 'apercu_image')
+    list_display = ('nom', 'est_active', 'nb_produits', 'apercu_image_principale')
     list_filter = ('est_active',)
     search_fields = ('nom', 'description')
     prepopulated_fields = {'slug': ('nom',)}
-    readonly_fields = ('date_creation', 'date_mise_a_jour', 'apercu_image')
+    readonly_fields = ('date_creation', 'date_mise_a_jour', 'apercu_image', 'apercu_image_principale')
+    inlines = [ImageCategorieInline]
+    
     fieldsets = (
         (_('Informations générales'), {
             'fields': ('nom', 'slug', 'description', 'est_active')
         }),
-        (_('Image'), {
+        (_('Image principale'), {
             'fields': ('image', 'apercu_image')
+        }),
+        (_('Galerie d\'images'), {
+            'fields': ('apercu_image_principale',)
         }),
         (_('Métadonnées'), {
             'classes': ('collapse',),
@@ -56,9 +74,16 @@ class CategorieAdmin(admin.ModelAdmin):
     
     def apercu_image(self, obj):
         if obj.image:
-            return format_html('<img src="{}" style="max-height: 100px;" />', obj.image.url)
+            return format_html('<img src="{}" style="max-height: 200px; max-width: 100%; object-fit: contain;" />', obj.image.url)
         return "Aucune image"
-    apercu_image.short_description = 'Aperçu de l\'image'
+    apercu_image.short_description = 'Aperçu de l\'image principale'
+    
+    def apercu_image_principale(self, obj):
+        images = obj.images.filter(est_principale=True).first()
+        if images:
+            return format_html('<p>Image principale actuelle :</p><img src="{}" style="max-height: 100px; max-width: 100%; object-fit: contain;" />', images.image.url)
+        return "Aucune image principale définie dans la galerie."
+    apercu_image_principale.short_description = 'Image principale de la galerie'
     
     def nb_produits(self, obj):
         return obj.produits.count()
@@ -134,6 +159,31 @@ class AvisProduitAdmin(admin.ModelAdmin):
     def note_etoiles(self, obj):
         return '★' * obj.note + '☆' * (5 - obj.note)
     note_etoiles.short_description = 'Note'
+
+
+@admin.register(ImageCategorie)
+class ImageCategorieAdmin(admin.ModelAdmin):
+    list_display = ('apercu_image', 'categorie', 'legende', 'est_principale', 'ordre')
+    list_filter = ('est_principale', 'categorie')
+    search_fields = ('categorie__nom', 'legende')
+    list_editable = ('legende', 'est_principale', 'ordre')
+    readonly_fields = ('apercu_image', 'date_ajout')
+    
+    fieldsets = (
+        (None, {
+            'fields': ('categorie', 'image', 'apercu_image', 'legende', 'est_principale', 'ordre')
+        }),
+        (_('Métadonnées'), {
+            'classes': ('collapse',),
+            'fields': ('date_ajout',),
+        }),
+    )
+    
+    def apercu_image(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="max-height: 100px; max-width: 100%; object-fit: contain;" />', obj.image.url)
+        return "Aucune image"
+    apercu_image.short_description = 'Aperçu'
 
 
 @admin.register(CaracteristiqueProduit)

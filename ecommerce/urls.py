@@ -16,10 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 from django.contrib.auth import views as auth_views
+from django.conf import settings
 
 urlpatterns = [
+    # Redirection de /catalogue/ vers /produits/
+    path('catalogue/', RedirectView.as_view(url='/produits/', permanent=True)),
+    
     # URL d'administration
     path('admin/', admin.site.urls),
     
@@ -35,6 +39,25 @@ urlpatterns = [
     # URLs du panier
     path('panier/', include('cart.urls', namespace='cart')),
     
+    # URLs des avis
+    path('reviews/', include('reviews.urls', namespace='reviews')),
+    
     # URLs d'authentification (pour les vues intégrées de Django)
     path('accounts/', include('django.contrib.auth.urls')),
+    
+    # API IA
+    path('api/ai/', include('ai_user.urls')),
 ]
+
+# Configuration pour le développement (DEBUG=True)
+if settings.DEBUG:
+    import debug_toolbar
+    from django.conf.urls.static import static
+    
+    # URLs pour debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
+    
+    # Servir les fichiers média en développement
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

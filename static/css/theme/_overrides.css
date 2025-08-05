@@ -1,0 +1,205 @@
+/* ==========================================================================
+   Surcharges CSS pour le thème
+   Correction des problèmes de mise en page et d'alignement
+   ========================================================================== */
+
+/* Correction du conteneur principal */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Conteneur principal avec espacement cohérent */
+.container {
+  width: 100%;
+  max-width: 1320px; /* Largeur maximale pour les grands écrans */
+  padding-right: var(--space-md);
+  padding-left: var(--space-md);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Correction des marges pour les conteneurs imbriqués */
+.container .container {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+/* Correction des marges pour les sections */
+section {
+  margin: var(--space-lg) 0;
+}
+
+/* Correction des marges pour les lignes Bootstrap */
+.row {
+  margin-right: calc(-0.5 * var(--space-md));
+  margin-left: calc(-0.5 * var(--space-md));
+}
+
+.row > * {
+  padding-right: calc(0.5 * var(--space-md));
+  padding-left: calc(0.5 * var(--space-md));
+}
+
+/* Correction des marges pour les cartes dans les grilles */
+.card {
+  margin-bottom: var(--space-md);
+  height: 100%;
+}
+
+/* Correction des marges pour les formulaires */
+.form-group {
+  margin-bottom: var(--space-md);
+}
+
+/* Correction des marges pour les boutons */
+.btn {
+  margin: var(--space-xs) 0;
+}
+
+/* Correction des marges pour les alertes */
+.alert {
+  margin: var(--space-md) 0;
+}
+
+/* Correction des marges pour les titres */
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: var(--space-md);
+}
+
+/* Correction pour les images responsives */
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Correction pour les tableaux */
+table {
+  width: 100%;
+  margin-bottom: var(--space-md);
+}
+
+/* Correction pour les listes */
+ul, ol {
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+/* Correction pour les éléments de formulaire */
+input,
+select,
+textarea {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: var(--space-sm);
+}
+
+/* Correction pour les éléments flex */
+.d-flex {
+  width: 100%;
+}
+
+/* Correction pour les éléments en ligne */
+.inline-flex {
+  display: inline-flex;
+}
+
+/* Correction pour les éléments positionnés de manière absolue */
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+}
+
+/* Correction pour les éléments flottants */
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Correction pour les éléments invisibles mais qui prennent de l'espace */
+.invisible {
+  visibility: hidden;
+}
+
+/* Correction pour les éléments cachés */
+.hidden {
+  display: none !important;
+}
+
+/* Correction pour les éléments avec débordement */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+/* Correction pour les éléments avec texte tronqué */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Correction pour les éléments avec texte sur plusieurs lignes */
+.text-wrap {
+  white-space: normal;
+}
+
+/* Correction pour les éléments avec texte en majuscules */
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+/* Correction pour les éléments avec texte en minuscules */
+.text-lowercase {
+  text-transform: lowercase;
+}
+
+/* Correction pour les éléments avec texte capitalisé */
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+/* Correction pour les éléments avec texte centré */
+.text-center {
+  text-align: center;
+}
+
+/* Correction pour les éléments avec texte aligné à droite */
+.text-end {
+  text-align: right;
+}
+
+/* Correction pour les éléments avec texte justifié */
+.text-justify {
+  text-align: justify;
+}
+
+/* Correction pour les éléments avec texte maintenant sur une seule ligne */
+.text-nowrap {
+  white-space: nowrap;
+}
+
+/* Correction pour les éléments avec texte tronqué sur plusieurs lignes */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Correction pour les éléments avec texte tronqué sur trois lignes */
+.text-truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

@@ -12,6 +12,11 @@ def product_image_path(instance, filename):
     return f'catalog/products/{instance.produit.id}/{filename}'
 
 
+def categorie_image_path(instance, filename):
+    # Génère un chemin pour l'image de la catégorie : catalog/categories/ID_CATEGORIE/filename
+    return f'catalog/categories/{instance.categorie.id}/{filename}'
+
+
 class Categorie(models.Model):
     """Modèle représentant une catégorie de produits."""
     nom = models.CharField(max_length=100, unique=True, verbose_name="Nom de la catégorie")
@@ -29,6 +34,33 @@ class Categorie(models.Model):
 
     def __str__(self):
         return self.nom
+        
+    @property
+    def average_rating(self):
+        """Calcule la note moyenne des avis approuvés pour ce produit."""
+        from django.db.models import Avg
+        return self.avis.filter(approuve=True).aggregate(avg_rating=Avg('note'))['avg_rating']
+    
+    def get_rating_stats(self):
+        """Retourne un dictionnaire avec le nombre d'avis par note."""
+        from django.db.models import Count
+        stats = {i: 0 for i in range(1, 6)}
+        queryset = self.avis.filter(approuve=True).values('note').annotate(count=Count('id'))
+        
+        for item in queryset:
+            stats[item['note']] = item['count']
+            
+        return stats
+    
+    def get_rating_percentages(self):
+        """Retourne un dictionnaire avec le pourcentage d'avis pour chaque note."""
+        stats = self.get_rating_stats()
+        total = sum(stats.values())
+        
+        if total == 0:
+            return {i: 0 for i in range(1, 6)}
+            
+        return {i: (count / total) * 100 for i, count in stats.items()}
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -37,6 +69,35 @@ class Categorie(models.Model):
 
     def get_absolute_url(self):
         return reverse('catalog:categorie_detail', kwargs={'slug': self.slug})
+
+
+class ImageCategorie(models.Model):
+    """Modèle pour stocker plusieurs images par catégorie."""
+    categorie = models.ForeignKey(
+        Categorie, 
+        on_delete=models.CASCADE, 
+        related_name='images',
+        verbose_name="Catégorie associée"
+    )
+    image = models.ImageField(upload_to=categorie_image_path, verbose_name="Image")
+    legende = models.CharField(max_length=200, blank=True, verbose_name="Légende")
+    est_principale = models.BooleanField(default=False, verbose_name="Image principale")
+    ordre = models.PositiveIntegerField(default=0, verbose_name="Ordre d'affichage")
+    date_ajout = models.DateTimeField(auto_now_add=True, verbose_name="Date d'ajout")
+
+    class Meta:
+        verbose_name = "Image de catégorie"
+        verbose_name_plural = "Images des catégories"
+        ordering = ['ordre', 'date_ajout']
+
+    def __str__(self):
+        return f"Image pour {self.categorie.nom}"
+    
+    def save(self, *args, **kwargs):
+        # S'assurer qu'une seule image est marquée comme principale
+        if self.est_principale:
+            ImageCategorie.objects.filter(categorie=self.categorie, est_principale=True).update(est_principale=False)
+        super().save(*args, **kwargs)
 
 
 class Produit(models.Model):
@@ -119,7 +180,23 @@ class Produit(models.Model):
         super().save(*args, **kwargs)
     
     def get_absolute_url(self):
-        return reverse('catalog:produit_detail', kwargs={'slug': self.slug})
+        return reverse('catalog:detail_produit', kwargs={'slug': self.slug})
+        
+    def has_purchased_by_user(self, user):
+        """
+        Vérifie si l'utilisateur a déjà acheté ce produit.
+        Retourne True si l'utilisateur a commandé ce produit au moins une fois.
+        """
+        if not user.is_authenticated:
+            return False
+            
+        from orders.models import OrderItem
+        return OrderItem.objects.filter(
+            order__user=user,
+            order__status__in=['completed', 'delivered'],  # Seules les commandes terminées ou livrées
+            product=self,
+            quantity__gt=0
+        ).exists()
     
     def est_en_promotion(self):
         """Vérifie si le produit est en promotion."""
@@ -135,6 +212,96 @@ class Produit(models.Model):
             reduction = ((self.prix - self.prix_promotionnel) / self.prix) * 100
             return int(round(reduction))
         return 0
+        
+    def get_economie(self):
+        """Calcule l'économie réalisée lorsque le produit est en promotion."""
+        if self.est_en_promotion():
+            return self.prix - self.prix_promotionnel
+        return 0
+        
+    def get_courte_description(self):
+        """Retourne la description courte (résumé) ou les premiers mots de la description complète si le résumé n'est pas disponible."""
+        if self.resume:
+            return self.resume
+        # Retourne les 30 premiers mots de la description complète si le résumé n'est pas disponible
+        return ' '.join(self.description.split()[:30]) + '...'
+        
+    @property
+    def average_rating(self):
+        """
+        Retourne la note moyenne du produit sur 5.
+        """
+        from django.db.models import Avg
+        result = self.avis.filter(approuve=True).aggregate(avg_rating=Avg('note'))
+        return result['avg_rating'] or 0
+        
+    @property
+    def rating_count(self):
+        """
+        Retourne le nombre total d'avis approuvés pour ce produit.
+        """
+        return self.avis.filter(approuve=True).count()
+        
+    def get_rating_stats(self):
+        """
+        Retourne un dictionnaire avec le nombre d'avis par note (1 à 5).
+        
+        Returns:
+            dict: Un dictionnaire avec comme clés les notes (1-5) et comme valeurs
+                  le nombre d'avis pour chaque note.
+                  Exemple: {1: 2, 2: 0, 3: 5, 4: 3, 5: 10}
+        """
+        from django.db.models import Count
+        
+        # Initialiser un dictionnaire avec des compteurs à zéro pour chaque note
+        stats = {i: 0 for i in range(1, 6)}
+        
+        # Récupérer le nombre d'avis groupés par note
+        ratings = self.avis.filter(approuve=True).values('note').annotate(count=Count('id'))
+        
+        # Mettre à jour le dictionnaire avec les valeurs réelles
+        for item in ratings:
+            stats[item['note']] = item['count']
+            
+        return stats
+        
+    def get_rating_percentages(self):
+        """
+        Retourne un dictionnaire avec le pourcentage d'avis pour chaque note (1 à 5).
+        
+        Returns:
+            dict: Un dictionnaire avec comme clés les notes (1-5) et comme valeurs
+                  le pourcentage d'avis pour chaque note.
+                  Exemple: {1: 10, 2: 0, 3: 25, 4: 15, 5: 50}
+        """
+        total_reviews = self.rating_count
+        if total_reviews == 0:
+            return {i: 0 for i in range(1, 6)}
+            
+        stats = self.get_rating_stats()
+        return {rating: int((count / total_reviews) * 100) for rating, count in stats.items()}
+        
+    def has_purchased_by_user(self, user):
+        """
+        Vérifie si un utilisateur a déjà acheté ce produit.
+        
+        Args:
+            user: L'instance de l'utilisateur à vérifier
+            
+        Returns:
+            bool: True si l'utilisateur a déjà acheté ce produit, False sinon
+        """
+        if not user.is_authenticated:
+            return False
+            
+        # Vérifier si l'utilisateur a une commande avec ce produit
+        from orders.models import Commande, LigneCommande
+        
+        return LigneCommande.objects.filter(
+            commande__utilisateur=user,
+            commande__statut__in=[Commande.PAYEE, Commande.EXPEDIEE, Commande.LIVREE],
+            produit=self
+        ).exists()
 
 
 class ImageProduit(models.Model):

@@ -85,7 +85,7 @@
                     <a href="{% url 'catalog:accueil' %}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-2"></i>Continuer mes achats
                     </a>
-                    <a href="#" class="btn btn-primary" onclick="alert('Le module de commande sera bientôt disponible !'); return false;">
+                    <a href="{% url 'orders:creer_commande' %}" class="btn btn-primary">
                         Passer la commande <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>

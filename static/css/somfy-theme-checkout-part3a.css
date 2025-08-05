@@ -1,0 +1,220 @@
+/* ==========================================================================
+   THEME SOMFY - Page de paiement (Partie 3a/4)
+   ========================================================================== */
+
+/* Méthodes de paiement */
+.payment-methods {
+    margin: 2rem 0;
+}
+
+.payment-method {
+    margin-bottom: 1rem;
+}
+
+.payment-method-radio {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.payment-method-label {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.payment-method-radio:checked + .payment-method-label {
+    border-color: var(--primary-color);
+    background-color: rgba(0, 51, 102, 0.05);
+}
+
+.payment-method-radio:focus + .payment-method-label {
+    box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.25);
+}
+
+.payment-method-radio-custom {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    margin-right: 1rem;
+    position: relative;
+    transition: all var(--transition-fast);
+}
+
+.payment-method-radio:checked + .payment-method-label .payment-method-radio-custom {
+    border-color: var(--primary-color);
+}
+
+.payment-method-radio:checked + .payment-method-label .payment-method-radio-custom::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+}
+
+.payment-method-details {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.payment-method-icon {
+    width: 40px;
+    height: 30px;
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.payment-method-icon img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.payment-method-name {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+/* Formulaire de carte de crédit */
+.credit-card-form {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    background-color: var(--background-light);
+}
+
+.credit-card-preview {
+    margin-bottom: 1.5rem;
+    position: relative;
+    height: 180px;
+    perspective: 1000px;
+}
+
+.credit-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+
+.credit-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.credit-card-front,
+.credit-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: #fff;
+}
+
+.credit-card-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, #34495e, #2c3e50);
+}
+
+.card-logo {
+    text-align: right;
+    margin-bottom: 1.5rem;
+}
+
+.card-logo img {
+    height: 30px;
+}
+
+.card-number {
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    font-family: 'Courier New', monospace;
+}
+
+.card-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.card-name {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-bottom: 0.25rem;
+}
+
+.card-expiry,
+.card-cvv {
+    font-family: 'Courier New', monospace;
+}
+
+.card-stripe {
+    height: 40px;
+    background-color: #000;
+    margin: 1.5rem -1.5rem 1rem;
+}
+
+.card-cvv-field {
+    background-color: #fff;
+    color: #000;
+    padding: 0.5rem;
+    border-radius: 4px;
+    text-align: right;
+    font-family: 'Courier New', monospace;
+    margin-top: 0.5rem;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -0.5rem;
+}
+
+.form-col {
+    flex: 1;
+    min-width: 0;
+    padding: 0 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Styles responsifs */
+@media (max-width: 767.98px) {
+    .credit-card-preview {
+        height: 160px;
+    }
+    
+    .card-number {
+        font-size: 1.1rem;
+    }
+    
+    .form-col {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
