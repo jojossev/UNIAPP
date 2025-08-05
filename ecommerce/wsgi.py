@@ -8,11 +8,9 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
 """
 
 import os
-from decouple import config
 from django.core.wsgi import get_wsgi_application
 
-# Set the default settings module for the 'development' environment
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-os.environ.setdefault('ENVIRONMENT', config('ENVIRONMENT', default='development'))
+# Configuration for production environment
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecommerce.settings')
 
 application = get_wsgi_application()
