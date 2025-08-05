@@ -9,23 +9,19 @@ dj-database-url==2.1.0
 python-decouple==3.8
 python-dotenv==1.0.0
 
-# Media handling
+# Media handling (version plus stable pour Python 3.10)
 Pillow==9.5.0
 
 # Forms
-crispy-bootstrap5==2024.2
-django-crispy-forms==2.1
+crispy-bootstrap5==2023.10  # Version plus stable
+django-crispy-forms==2.0
 
 # Authentication
-django-allauth==0.61.1
+django-allauth==0.58.2  # Version plus stable
 
 # Production
 gunicorn==21.2.0
-whitenoise==6.6.0
+whitenoise==6.5.0  # Version plus stable
 
-# Production
-gunicorn==21.2.0
-whitenoise==6.6.0
-
-# Development
-debugpy==1.8.0
+# Development (à supprimer en production)
+# debugpy==1.8.0
